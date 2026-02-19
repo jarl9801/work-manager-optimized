@@ -1,10 +1,10 @@
 {
-  "name": "Work Manager",
-  "short_name": "WM",
+  "name": "Work Manager 98",
+  "short_name": "WM98",
   "start_url": ".",
   "display": "standalone",
-  "background_color": "#0f0f1a",
-  "theme_color": "#00C853",
+  "background_color": "#008080",
+  "theme_color": "#000080",
   "icons": [
     {
       "src": "icon-192.png",

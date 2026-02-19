@@ -4,56 +4,124 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <title>Work Manager - Umtelkomd</title>
+    <title>Work Manager 98 - Umtelkomd</title>
     <link rel="manifest" href="manifest.json">
-    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="https://unpkg.com/98.css">
+    <link rel="stylesheet" href="css/win98-custom.css">
 </head>
 <body>
-    <!-- Sidebar -->
-    <aside class="sidebar">
-        <div class="sidebar-logo">
-            <h2>Work Manager</h2>
-            <small>Umtelkomd</small>
+    <!-- Login Screen -->
+    <div id="login-screen">
+        <div class="login-wrapper">
+            <div class="window login-window">
+                <div class="title-bar">
+                    <div class="title-bar-text">Iniciar Sesion - Work Manager 98</div>
+                </div>
+                <div class="window-body">
+                    <div class="login-header">
+                        <div class="login-icon">&#128421;</div>
+                        <div class="login-title">Work Manager 98</div>
+                        <div class="login-subtitle">Umtelkomd GmbH</div>
+                    </div>
+                    <div class="field-row-stacked" style="margin-bottom:8px">
+                        <label for="login-email">Usuario:</label>
+                        <input type="email" id="login-email" placeholder="email@empresa.com" autocomplete="email">
+                    </div>
+                    <div class="field-row-stacked" style="margin-bottom:12px">
+                        <label for="login-pass">Contrasena:</label>
+                        <input type="password" id="login-pass" placeholder="********" autocomplete="current-password">
+                    </div>
+                    <div id="login-error" style="display:none;color:#cc0000;font-size:10px;margin-bottom:8px;padding:4px 6px;background:#ffe0e0;border:1px solid #cc0000">
+                        Usuario o contrasena incorrectos
+                    </div>
+                    <div style="display:flex;justify-content:flex-end;gap:6px">
+                        <button id="login-btn" onclick="doLogin()">Aceptar</button>
+                        <button onclick="document.getElementById('login-email').value='';document.getElementById('login-pass').value=''">Cancelar</button>
+                    </div>
+                </div>
+                <div class="status-bar">
+                    <p class="status-bar-field" id="login-status">Ingrese sus credenciales</p>
+                </div>
+            </div>
         </div>
-        <nav>
-            <div class="nav-item active" data-view="dashboard">
-                <span class="icon">📊</span>
+    </div>
+
+    <!-- Desktop (hidden until login) -->
+    <div id="desktop" style="display:none">
+        <!-- Windows are created dynamically by JS -->
+    </div>
+
+    <!-- Start Menu -->
+    <div id="start-menu">
+        <div class="start-sidebar">
+            <span>Work Manager 98</span>
+        </div>
+        <div class="start-items">
+            <div class="start-item" onclick="WM.open('dashboard'); toggleStartMenu()">
+                <span class="start-icon">&#128202;</span>
                 <span data-t="navDashboard">Dashboard</span>
             </div>
-            <div class="nav-item" data-view="clients">
-                <span class="icon">👥</span>
+            <div class="start-item" onclick="WM.open('clients'); toggleStartMenu()">
+                <span class="start-icon">&#128101;</span>
                 <span data-t="navClients">Clientes</span>
             </div>
-            <div class="nav-item" data-view="orders">
-                <span class="icon">📋</span>
-                <span data-t="navOrders">Órdenes</span>
+            <div class="start-item" onclick="WM.open('orders'); toggleStartMenu()">
+                <span class="start-icon">&#128203;</span>
+                <span data-t="navOrders">Ordenes</span>
             </div>
-            <div class="nav-item" data-view="projects">
-                <span class="icon">📁</span>
+            <div class="start-item" onclick="WM.open('projects'); toggleStartMenu()">
+                <span class="start-icon">&#128193;</span>
                 <span data-t="navProjects">Proyectos</span>
             </div>
-            <div class="nav-item" data-view="invoicing">
-                <span class="icon">💶</span>
-                <span data-t="navInvoicing">Facturación</span>
+            <div class="start-item" onclick="WM.open('invoicing'); toggleStartMenu()">
+                <span class="start-icon">&#128182;</span>
+                <span data-t="navInvoicing">Facturacion</span>
             </div>
-            <div class="nav-item" data-view="prices">
-                <span class="icon">💰</span>
+            <div class="start-item" onclick="WM.open('prices'); toggleStartMenu()">
+                <span class="start-icon">&#128176;</span>
                 <span data-t="navPrices">Precios</span>
             </div>
-        </nav>
-    </aside>
+            <div class="start-item" onclick="WM.open('newworks'); toggleStartMenu()">
+                <span class="start-icon">&#128221;</span>
+                <span>Nuevos Trabajos</span>
+            </div>
+            <div class="start-separator"></div>
+            <div class="start-item" onclick="toggleLanguage(); toggleStartMenu()">
+                <span class="start-icon">&#127760;</span>
+                <span>Idioma / Sprache</span>
+            </div>
+            <div class="start-item" onclick="WM.open('about'); toggleStartMenu()">
+                <span class="start-icon">&#8505;</span>
+                <span>About</span>
+            </div>
+        </div>
+    </div>
 
-    <!-- Main Content -->
-    <main class="main">
-        <!-- Views will be loaded here -->
-        <div id="app"></div>
-    </main>
+    <!-- Taskbar (hidden until login) -->
+    <div id="taskbar" style="display:none">
+        <button id="start-button" onclick="toggleStartMenu()">
+            <span>&#128421;</span> Start
+        </button>
+        <div class="taskbar-divider"></div>
+        <div id="taskbar-windows"></div>
+        <div id="taskbar-tray">
+            <span id="lang-indicator" class="lang-indicator" onclick="toggleLanguage()" title="Cambiar idioma">ES</span>
+            <span id="taskbar-clock">00:00</span>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast" class="window" style="width:auto;min-width:auto;min-height:auto;">
+        <div class="title-bar">
+            <div class="title-bar-text">Info</div>
+        </div>
+        <div class="window-body" style="padding:6px 12px;">
+            <span id="toast-msg"></span>
+        </div>
+    </div>
 
     <!-- Scripts -->
     <script src="data/prices.js"></script>
-    <script src="js/i18n.js"></script>
-    <script src="js/db.js"></script>
-    <script src="js/dp-module.js"></script>
-    <script src="js/app.js"></script>
+    <script src="js/win98-app.js"></script>
 </body>
 </html>

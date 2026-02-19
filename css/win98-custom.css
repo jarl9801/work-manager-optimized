@@ -1,0 +1,893 @@
+/* ===========================================
+   Work Manager 98 - Custom Win98 Styles
+   Extends 98.css with desktop, taskbar,
+   start menu, and module-specific styling
+   =========================================== */
+
+/* Reset & Base */
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin:0; padding:0; height:100%; overflow:hidden; font-size:11px; }
+
+/* ===========================================
+   LOGIN SCREEN
+   =========================================== */
+#login-screen {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: #008080;
+    z-index: 99999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.login-wrapper {
+    animation: loginFadeIn 0.4s ease;
+}
+
+@keyframes loginFadeIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+.login-window {
+    width: 340px;
+    box-shadow: 6px 6px 12px rgba(0,0,0,0.5);
+}
+
+.login-window .window-body {
+    padding: 16px 20px;
+    background: silver;
+}
+
+.login-header {
+    text-align: center;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #808080;
+}
+
+.login-icon {
+    font-size: 48px;
+    line-height: 1;
+    margin-bottom: 4px;
+}
+
+.login-title {
+    font-size: 16px;
+    font-weight: bold;
+    color: #000080;
+}
+
+.login-subtitle {
+    font-size: 10px;
+    color: #808080;
+    letter-spacing: 1px;
+}
+
+.login-window input[type="email"],
+.login-window input[type="password"] {
+    width: 100%;
+    font-size: 12px;
+    padding: 3px 6px;
+}
+
+.login-window .field-row-stacked label {
+    font-size: 11px;
+    font-weight: bold;
+    margin-bottom: 2px;
+}
+
+.login-window button#login-btn {
+    min-width: 80px;
+    font-weight: bold;
+}
+
+@keyframes loginShake {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-6px); }
+    40%, 80% { transform: translateX(6px); }
+}
+
+.login-shake {
+    animation: loginShake 0.4s ease;
+}
+
+/* ===========================================
+   DESKTOP
+   =========================================== */
+#desktop {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    bottom: 28px;
+    background: #008080;
+    overflow: hidden;
+}
+
+/* ===========================================
+   TASKBAR
+   =========================================== */
+#taskbar {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    height: 28px;
+    background: silver;
+    border-top: 2px outset #fff;
+    display: flex;
+    align-items: center;
+    padding: 2px 2px;
+    z-index: 9999;
+    box-sizing: border-box;
+}
+
+#start-button {
+    font-weight: bold;
+    font-size: 11px;
+    padding: 0 6px;
+    height: 22px;
+    min-width: 54px;
+    margin-right: 4px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+}
+
+.taskbar-divider {
+    width: 2px;
+    height: 20px;
+    border-left: 1px solid #808080;
+    border-right: 1px solid #fff;
+    margin: 0 2px;
+    flex-shrink: 0;
+}
+
+#taskbar-windows {
+    flex: 1;
+    display: flex;
+    gap: 2px;
+    overflow-x: auto;
+    min-width: 0;
+    scrollbar-width: none;
+}
+#taskbar-windows::-webkit-scrollbar { display: none; }
+
+#taskbar-windows button {
+    font-size: 10px;
+    padding: 0 8px;
+    height: 22px;
+    max-width: 150px;
+    min-width: 60px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    text-align: left;
+    flex-shrink: 0;
+}
+
+#taskbar-windows button.active {
+    font-weight: bold;
+    box-shadow: inset 1px 1px 1px #808080;
+    background: #e0e0e0;
+}
+
+#taskbar-tray {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0 8px;
+    border: 1px inset;
+    margin-left: 2px;
+    font-size: 11px;
+    flex-shrink: 0;
+    height: 22px;
+    background: silver;
+}
+
+#taskbar-clock {
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    font-size: 11px;
+}
+
+.lang-indicator {
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 10px;
+    color: #000080;
+    padding: 0 2px;
+}
+.lang-indicator:hover { color: #0000ff; }
+
+/* ===========================================
+   START MENU
+   =========================================== */
+#start-menu {
+    display: none;
+    position: fixed;
+    bottom: 28px;
+    left: 0;
+    z-index: 9998;
+    background: silver;
+    border: 2px outset #fff;
+    width: 200px;
+    box-shadow: 4px 4px 8px rgba(0,0,0,0.4);
+}
+
+#start-menu.open { display: flex; }
+
+.start-sidebar {
+    width: 24px;
+    background: linear-gradient(to top, #000080 0%, #1084d0 100%);
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding-bottom: 6px;
+    flex-shrink: 0;
+}
+
+.start-sidebar span {
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    font-weight: bold;
+    font-size: 14px;
+    white-space: nowrap;
+    color: white;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+}
+
+.start-items {
+    flex: 1;
+    padding: 2px 0;
+}
+
+.start-item {
+    padding: 6px 12px 6px 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    white-space: nowrap;
+}
+
+.start-item:hover {
+    background: #000080;
+    color: white;
+}
+
+.start-item .start-icon {
+    width: 16px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.start-separator {
+    height: 1px;
+    background: #808080;
+    margin: 2px 4px;
+    border-bottom: 1px solid #fff;
+}
+
+/* ===========================================
+   WINDOWS
+   =========================================== */
+#desktop .window {
+    position: absolute;
+    min-width: 300px;
+    min-height: 180px;
+    display: none;
+    flex-direction: column;
+    box-shadow: 4px 4px 10px rgba(0,0,0,0.5);
+    max-height: calc(100vh - 40px);
+}
+
+#desktop .window.visible { display: flex; }
+
+#desktop .window.maximized {
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: calc(100vh - 28px) !important;
+    box-shadow: none;
+}
+
+#desktop .window .title-bar {
+    cursor: move;
+    flex-shrink: 0;
+    user-select: none;
+}
+
+#desktop .window .title-bar.inactive {
+    background: linear-gradient(90deg, #808080, #b0b0b0);
+}
+
+/* Window body */
+#desktop .window .window-body {
+    flex: 1;
+    overflow: auto;
+    padding: 8px;
+    background: silver;
+}
+
+/* Status bar */
+#desktop .window .status-bar {
+    flex-shrink: 0;
+    background: silver;
+    border-top: 1px solid #808080;
+    padding: 2px 6px;
+    font-size: 10px;
+    color: #444;
+    display: flex;
+    align-items: center;
+}
+
+/* ===========================================
+   KPI GRID (fieldsets)
+   =========================================== */
+.kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 6px;
+    margin-bottom: 10px;
+}
+
+.kpi-grid fieldset {
+    margin: 0;
+    text-align: center;
+    padding: 6px;
+}
+
+.kpi-value {
+    font-size: 28px;
+    font-weight: bold;
+    margin: 2px 0;
+}
+
+.kpi-trend {
+    font-size: 9px;
+    color: #808080;
+}
+
+/* ===========================================
+   BADGES
+   =========================================== */
+.badge-98 {
+    display: inline-block;
+    padding: 1px 6px;
+    font-size: 9px;
+    font-weight: bold;
+    border: 1px solid;
+}
+
+.badge-98.green { background:#c0ffc0; color:#006000; border-color:#008000; }
+.badge-98.red { background:#ffc0c0; color:#800000; border-color:#a00000; }
+.badge-98.blue { background:#c0c0ff; color:#000080; border-color:#0000a0; }
+.badge-98.yellow { background:#ffffc0; color:#606000; border-color:#808000; }
+.badge-98.orange { background:#ffe0c0; color:#804000; border-color:#a06000; }
+.badge-98.purple { background:#e0c0ff; color:#400080; border-color:#6000a0; }
+.badge-98.gray { background:#e0e0e0; color:#606060; border-color:#808080; }
+
+/* ===========================================
+   SUNKEN PANEL & TABLES
+   =========================================== */
+.sunken-panel {
+    box-sizing: border-box;
+    padding: 0;
+    border: 2px inset;
+    background: white;
+    overflow: auto;
+}
+
+.sunken-panel table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11px;
+}
+
+.sunken-panel table th {
+    background: silver;
+    border: 1px outset;
+    padding: 3px 6px;
+    text-align: left;
+    font-weight: bold;
+    font-size: 10px;
+    cursor: pointer;
+    white-space: nowrap;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+.sunken-panel table th:hover { background: #d0d0d0; }
+
+.sunken-panel table td {
+    padding: 2px 6px;
+    border-bottom: 1px solid #e0e0e0;
+    white-space: nowrap;
+}
+
+.sunken-panel table tbody tr:hover td {
+    background: #000080;
+    color: white;
+}
+
+.sunken-panel table tr.order-row { cursor: pointer; }
+
+.sunken-panel table tr.order-detail-row td {
+    background: #f0f0f0 !important;
+    color: #000 !important;
+    border-bottom: 2px solid silver;
+}
+
+.sunken-panel table tr.order-detail-row:hover td {
+    background: #f0f0f0 !important;
+    color: #000 !important;
+}
+
+/* ===========================================
+   ORDER DETAIL EXPAND
+   =========================================== */
+.order-detail-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 4px;
+    padding: 8px;
+    font-size: 11px;
+    background: #f0f0f0;
+}
+
+.detail-field {
+    background: white;
+    padding: 4px 6px;
+    border: 1px solid #c0c0c0;
+}
+
+.detail-label {
+    font-size: 9px;
+    color: #808080;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.detail-value { margin-top: 1px; }
+.detail-incident { color: #cc0000; font-weight: bold; }
+
+.detail-photos a {
+    color: #000080;
+    font-size: 10px;
+    display: block;
+}
+.detail-photos a:hover { color: #0000ff; }
+
+/* ===========================================
+   TAB CONTROL
+   =========================================== */
+.win-tabs { margin-bottom: 6px; }
+
+.win-tabs menu[role="tablist"],
+.win-tabs [role="tablist"] {
+    display: flex;
+    gap: 0;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+.win-tabs menu[role="tablist"] li a,
+.win-tabs [role="tablist"] li a {
+    display: block;
+    padding: 4px 12px;
+    font-size: 11px;
+    color: #000;
+    text-decoration: none;
+    border: 2px outset;
+    border-bottom: none;
+    background: silver;
+    cursor: pointer;
+    margin-bottom: -1px;
+}
+
+.win-tabs menu[role="tablist"] li[aria-selected="true"] a,
+.win-tabs [role="tablist"] li[aria-selected="true"] a {
+    background: silver;
+    border-bottom: 2px solid silver;
+    font-weight: bold;
+    padding-bottom: 5px;
+}
+
+.win-tabs menu[role="tablist"] li a:hover,
+.win-tabs [role="tablist"] li a:hover {
+    background: #e0e0e0;
+}
+
+.win-tab-content {
+    display: none;
+    border: 2px inset;
+    padding: 8px;
+    background: silver;
+}
+
+.win-tab-content.active { display: block; }
+
+/* ===========================================
+   FILTER BAR
+   =========================================== */
+.filter-bar {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 6px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.filter-bar input,
+.filter-bar select {
+    font-size: 11px;
+    padding: 1px 4px;
+    height: 22px;
+}
+
+.filter-bar input[type="text"] { width: 130px; }
+.filter-bar select { max-width: 130px; }
+
+/* ===========================================
+   ACTION BAR
+   =========================================== */
+.action-bar {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 6px;
+    flex-wrap: wrap;
+}
+
+.action-bar button {
+    font-size: 10px;
+    padding: 0 8px;
+    height: 22px;
+}
+
+/* ===========================================
+   UPLOAD ZONE
+   =========================================== */
+.upload-zone-98 {
+    border: 2px dashed #808080;
+    padding: 8px;
+    text-align: center;
+    margin: 6px 0;
+    background: #f0f0f0;
+    font-size: 11px;
+}
+
+.upload-zone-98.dragover {
+    background: #e0e0ff;
+    border-color: #000080;
+}
+
+.upload-zone-98 input[type="file"] { margin-top: 4px; }
+
+.upload-status {
+    font-size: 10px;
+    padding: 2px 4px;
+    margin-top: 4px;
+}
+.upload-status.success { color: #006000; font-weight: bold; }
+.upload-status.error { color: #cc0000; font-weight: bold; }
+.upload-status.processing { color: #804000; }
+
+/* ===========================================
+   PROJECT CARDS GRID
+   =========================================== */
+.project-grid-98 {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 8px;
+    align-items: start;
+}
+
+.project-grid-98 > fieldset {
+    margin: 0;
+    cursor: pointer;
+    font-size: 11px;
+    transition: background 0.15s;
+}
+
+.project-grid-98 > fieldset:hover {
+    background: #e8e8e8;
+}
+
+/* Expanded project spans full width so table doesn't overlap */
+.project-grid-98 > fieldset.project-expanded {
+    grid-column: 1 / -1;
+    background: #f4f4f4;
+    border-color: #000080;
+}
+
+.project-grid-98 > fieldset.project-expanded:hover {
+    background: #f4f4f4;
+}
+
+/* Project header section (stats above the DP table) */
+.project-header-98 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0 16px;
+}
+
+.project-stat-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 2px 0;
+    border-bottom: 1px solid #d0d0d0;
+    font-size: 11px;
+}
+
+.project-stat-row:last-child { border-bottom: none; }
+
+.project-stat-row span:last-child {
+    font-weight: bold;
+    color: #000080;
+}
+
+/* Fertig row with progress */
+.project-fertig-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 4px;
+    padding-top: 4px;
+    border-top: 1px solid #c0c0c0;
+    font-size: 11px;
+}
+
+.project-fertig-row .progress-indicator {
+    flex: 1;
+    margin: 0;
+}
+
+.project-fertig-row span {
+    white-space: nowrap;
+}
+
+/* DP table inside expanded project */
+.project-dp-wrapper {
+    margin-top: 8px;
+    border-top: 2px solid #000080;
+    padding-top: 6px;
+}
+
+.project-dp-wrapper .sunken-panel {
+    max-height: 320px;
+    overflow-y: auto;
+}
+
+/* ===========================================
+   PROGRESS BARS
+   =========================================== */
+.status-bar-98 {
+    display: flex;
+    height: 14px;
+    border: 2px inset;
+    overflow: hidden;
+    margin: 4px 0;
+    background: white;
+}
+
+.status-bar-98 div {
+    height: 100%;
+    min-width: 1px;
+}
+
+/* ===========================================
+   ALERT & ACTIVITY ITEMS
+   =========================================== */
+.alert-item-98 {
+    padding: 3px 6px;
+    font-size: 11px;
+    border-bottom: 1px solid #d0d0d0;
+    display: flex;
+    gap: 6px;
+    align-items: center;
+}
+.alert-item-98:last-child { border-bottom: none; }
+
+.activity-item-98 {
+    padding: 2px 6px;
+    font-size: 10px;
+    border-bottom: 1px solid #e0e0e0;
+    display: flex;
+    justify-content: space-between;
+}
+
+.activity-item-98 .time {
+    color: #808080;
+    flex-shrink: 0;
+    margin-left: 10px;
+}
+
+/* ===========================================
+   TECHNICIAN CARDS
+   =========================================== */
+.tech-grid-98 {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 6px;
+}
+
+.tech-grid-98 fieldset { margin: 0; font-size: 11px; }
+
+.tech-stat-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 2px 0;
+    font-size: 11px;
+    border-bottom: 1px solid #d0d0d0;
+}
+
+/* ===========================================
+   STATUS OVERVIEW CARDS
+   =========================================== */
+.status-grid-98 {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 4px;
+    margin-bottom: 6px;
+}
+
+.status-grid-98 fieldset {
+    margin: 0;
+    text-align: center;
+    padding: 4px;
+}
+
+.status-val-98 {
+    font-size: 22px;
+    font-weight: bold;
+}
+
+/* ===========================================
+   INVOICE TOTALS
+   =========================================== */
+.invoice-totals-98 {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 6px;
+    margin-bottom: 8px;
+}
+
+.invoice-totals-98 fieldset { margin: 0; text-align: center; }
+
+/* ===========================================
+   QUICK ACTIONS
+   =========================================== */
+.quick-actions {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+    margin: 4px 0;
+}
+
+.quick-actions button {
+    font-size: 10px;
+    padding: 0 8px;
+    height: 22px;
+}
+
+/* ===========================================
+   DP TABLE ROWS (color-coded status)
+   =========================================== */
+tr.dp-row-green td { background: #e0ffe0 !important; }
+tr.dp-row-yellow td { background: #fffde0 !important; }
+tr.dp-row-red td { background: #ffe8e8 !important; }
+
+tr.dp-row-green:hover td { background: #c0ffc0 !important; color: #000 !important; }
+tr.dp-row-yellow:hover td { background: #fff8c0 !important; color: #000 !important; }
+tr.dp-row-red:hover td { background: #ffd0d0 !important; color: #000 !important; }
+
+/* Override blue hover for DP rows */
+.project-dp-wrapper .sunken-panel table tbody tr:hover td {
+    color: #000;
+    background: inherit;
+}
+.project-dp-wrapper .sunken-panel table tbody tr.dp-row-green:hover td { background: #c0ffc0 !important; }
+.project-dp-wrapper .sunken-panel table tbody tr.dp-row-yellow:hover td { background: #fff8c0 !important; }
+.project-dp-wrapper .sunken-panel table tbody tr.dp-row-red:hover td { background: #ffd0d0 !important; }
+
+/* ===========================================
+   TOAST NOTIFICATION
+   =========================================== */
+#toast {
+    display: none;
+    position: fixed;
+    bottom: 40px;
+    right: 10px;
+    z-index: 10000;
+    font-size: 11px;
+    max-width: 300px;
+}
+
+#toast.show { display: block; }
+
+#toast .title-bar {
+    height: 20px;
+    cursor: default;
+}
+
+/* ===========================================
+   IMPORT REPORT DIALOG
+   =========================================== */
+.report-summary {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 8px;
+}
+
+.report-summary fieldset {
+    flex: 1;
+    margin: 0;
+    text-align: center;
+    font-size: 11px;
+}
+
+.report-summary .rpt-val {
+    font-size: 22px;
+    font-weight: bold;
+}
+
+.report-list {
+    margin: 4px 0 6px 16px;
+    padding: 0;
+    font-size: 10px;
+    max-height: 150px;
+    overflow-y: auto;
+}
+
+.report-list li {
+    margin: 2px 0;
+}
+
+.report-section-title {
+    font-weight: bold;
+    font-size: 11px;
+    margin: 8px 0 4px;
+    padding-bottom: 2px;
+    border-bottom: 1px solid #808080;
+}
+
+/* ===========================================
+   FORM GRID
+   =========================================== */
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+}
+
+.form-grid .field-row-stacked { margin-bottom: 0; }
+.form-grid .full-width { grid-column: 1 / -1; }
+
+.field-row { margin-bottom: 4px; }
+.field-row label { font-size: 10px; }
+
+/* ===========================================
+   DIALOG / MODAL WINDOW OVERLAY
+   =========================================== */
+[id^="win-dlg-"] { z-index: 9000; }
+
+/* ===========================================
+   RESPONSIVE
+   =========================================== */
+@media (max-width: 768px) {
+    #desktop .window {
+        top: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        height: calc(100vh - 28px) !important;
+        min-width: unset;
+    }
+
+    .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+    .project-grid-98 { grid-template-columns: 1fr; }
+    .filter-bar input[type="text"] { width: 100px; }
+    .form-grid { grid-template-columns: 1fr; }
+    #start-menu { width: 180px; }
+}
