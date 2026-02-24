@@ -86,6 +86,7 @@ let legacyOrders = [];
 let clientSort = { field:'dp', dir:1 };
 let currentOrderTab = 'ra';
 let editingOrderType = null;
+let editingOrderId = null;
 let orderFilters = { search: '', technician: '', project: '' };
 let expandedProjects = new Set();
 let lastNewWorksReport = null;
@@ -1101,7 +1102,11 @@ function getOrdersScaffold() {
 }
 
 function getProjectsScaffold() {
-    return `<div class="project-grid-98" id="projectsGrid"></div>`;
+    return `
+    <div style="margin-bottom:8px">
+        <button onclick="openProjectModal()">➕ Nuevo Proyecto</button>
+    </div>
+    <div class="project-grid-98" id="projectsGrid"></div>`;
 }
 
 function getInvoicingScaffold() {
@@ -1540,7 +1545,10 @@ function renderOrders() {
         raBody.innerHTML = fRA.length ? fRA.map((o, i) => `<tr class="order-row" onclick="toggleOrderDetail(this,'ra',${i})">
             <td>${o.startDate || o.timestamp}</td><td>${o.projectCode}</td><td>${o.dp || '-'}</td><td>${o.technician}</td>
             <td>${o.fibers}</td><td>${o.meters}</td><td>${o.color}</td><td style="font-size:10px">${o.incidents || '-'}</td>
-            <td><button style="font-size:10px;padding:1px 4px" onclick="event.stopPropagation();deleteOrder('orders_ra',${o.id},'Soplado RA')">X</button></td>
+            <td>
+                <button style="font-size:10px;padding:1px 4px" onclick="event.stopPropagation();editOrderById('ra',${o.id})" title="Editar">✏️</button>
+                <button style="font-size:10px;padding:1px 4px" onclick="event.stopPropagation();deleteOrder('orders_ra',${o.id},'Soplado RA')" title="Eliminar">X</button>
+            </td>
         </tr>`).join('') : `<tr><td colspan="9" style="text-align:center;padding:20px;color:#808080">${t('noData')}</td></tr>`;
     }
 
@@ -1549,7 +1557,10 @@ function renderOrders() {
         rdBody.innerHTML = fRD.length ? fRD.map((o, i) => `<tr class="order-row" onclick="toggleOrderDetail(this,'rd',${i})">
             <td>${o.startDate || o.timestamp}</td><td>${o.projectCode}</td><td>${o.dp}</td><td style="font-size:11px">${o.street}</td>
             <td>${o.ka}</td><td>${o.technician}</td><td>${o.meters}</td><td>${o.color}</td><td>${o.fibers}</td>
-            <td><button style="font-size:10px;padding:1px 4px" onclick="event.stopPropagation();deleteOrder('orders_rd',${o.id},'Soplado RD')">X</button></td>
+            <td>
+                <button style="font-size:10px;padding:1px 4px" onclick="event.stopPropagation();editOrderById('rd',${o.id})" title="Editar">✏️</button>
+                <button style="font-size:10px;padding:1px 4px" onclick="event.stopPropagation();deleteOrder('orders_rd',${o.id},'Soplado RD')" title="Eliminar">X</button>
+            </td>
         </tr>`).join('') : `<tr><td colspan="10" style="text-align:center;padding:20px;color:#808080">${t('noData')}</td></tr>`;
     }
 
@@ -1558,7 +1569,10 @@ function renderOrders() {
         fusionBody.innerHTML = fFusion.length ? fFusion.map((o, i) => `<tr class="order-row" onclick="toggleOrderDetail(this,'fusion',${i})">
             <td>${o.startDate || o.timestamp}</td><td>${o.projectCode}</td><td>${o.dp}</td>
             <td>${o.technician}</td><td>${o.splices}</td><td style="font-size:10px">${o.incidents || '-'}</td>
-            <td><button style="font-size:10px;padding:1px 4px" onclick="event.stopPropagation();deleteOrder('orders_fusion',${o.id},'Fusion')">X</button></td>
+            <td>
+                <button style="font-size:10px;padding:1px 4px" onclick="event.stopPropagation();editOrderById('fusion',${o.id})" title="Editar">✏️</button>
+                <button style="font-size:10px;padding:1px 4px" onclick="event.stopPropagation();deleteOrder('orders_fusion',${o.id},'Fusion')" title="Eliminar">X</button>
+            </td>
         </tr>`).join('') : `<tr><td colspan="7" style="text-align:center;padding:20px;color:#808080">${t('noData')}</td></tr>`;
     }
 
@@ -1689,9 +1703,18 @@ function renderProjects() {
         }
 
         const expandedClass = isExpanded ? ' project-expanded' : '';
+        const isManual = projects.some(p => p.code === code);
+        const manualData = projects.find(p => p.code === code);
+        const statusBadge = manualData?.status === 'paused' ? '<span class="badge-98 yellow">Pausado</span>' 
+            : manualData?.status === 'completed' ? '<span class="badge-98 green">Completado</span>'
+            : manualData?.status === 'cancelled' ? '<span class="badge-98 red">Cancelado</span>' : '';
 
-        html += `<fieldset class="${expandedClass}" onclick="toggleProject('${code}')">
-            <legend style="color:#000080;font-weight:bold">${code} ${isExpanded ? '[-]' : '[+]'}</legend>
+        html += `<fieldset class="${expandedClass}">
+            <legend style="color:#000080;font-weight:bold;cursor:pointer" onclick="toggleProject('${code}')">${code} ${statusBadge} ${isExpanded ? '[-]' : '[+]'}</legend>
+            <div style="text-align:right;margin:-4px 0 4px">
+                <button style="font-size:10px;padding:2px 6px" onclick="event.stopPropagation();editProject('${code}')" title="Editar">✏️</button>
+                <button style="font-size:10px;padding:2px 6px" onclick="event.stopPropagation();deleteProject('${code}')" title="Eliminar">🗑️</button>
+            </div>
             <div class="project-stat-row"><span>DPs</span><span>${data.dps.size}</span></div>
             <div class="project-stat-row"><span>${t('totalClients')}</span><span>${data.total}</span></div>
             <div class="status-bar-98">${barHtml}</div>
@@ -1717,6 +1740,183 @@ function renderProjects() {
 
     const statusEl = document.getElementById('winstatus-projects');
     if (statusEl) statusEl.textContent = Object.keys(projMap).length + ' proyectos';
+}
+
+// ============================================
+// SECTION 12a: PROJECT CRUD
+// ============================================
+
+function openProjectModal(existingData = null) {
+    const isEdit = !!existingData;
+    const title = isEdit ? 'Editar Proyecto' : 'Nuevo Proyecto';
+    const v = (field) => existingData?.[field] || '';
+    
+    const html = `
+        <div class="form-grid">
+            <div class="field-row-stacked">
+                <label for="pm_code">Código del Proyecto *</label>
+                <input type="text" id="pm_code" placeholder="QFF-001" value="${v('code')}" ${isEdit ? 'readonly style="background:#c0c0c0"' : ''}>
+            </div>
+            <div class="field-row-stacked">
+                <label for="pm_projektnummer">Projektnummer</label>
+                <input type="text" id="pm_projektnummer" placeholder="123456" value="${v('projektnummer')}">
+            </div>
+            <div class="field-row-stacked full-width">
+                <label for="pm_name">Nombre / Descripción</label>
+                <input type="text" id="pm_name" placeholder="Proyecto de fibra..." value="${v('name')}">
+            </div>
+            <div class="field-row-stacked">
+                <label for="pm_client">Cliente</label>
+                <input type="text" id="pm_client" placeholder="Telekom / ENTEGA" value="${v('client')}">
+            </div>
+            <div class="field-row-stacked">
+                <label for="pm_location">Ubicación</label>
+                <input type="text" id="pm_location" placeholder="Frankfurt" value="${v('location')}">
+            </div>
+            <div class="field-row-stacked">
+                <label for="pm_startDate">Fecha Inicio</label>
+                <input type="date" id="pm_startDate" value="${v('startDate')}">
+            </div>
+            <div class="field-row-stacked">
+                <label for="pm_endDate">Fecha Fin (estimada)</label>
+                <input type="date" id="pm_endDate" value="${v('endDate')}">
+            </div>
+            <div class="field-row-stacked">
+                <label for="pm_status">Estado</label>
+                <select id="pm_status">
+                    <option value="active" ${v('status')==='active'?'selected':''}>Activo</option>
+                    <option value="paused" ${v('status')==='paused'?'selected':''}>Pausado</option>
+                    <option value="completed" ${v('status')==='completed'?'selected':''}>Completado</option>
+                    <option value="cancelled" ${v('status')==='cancelled'?'selected':''}>Cancelado</option>
+                </select>
+            </div>
+            <div class="field-row-stacked full-width">
+                <label for="pm_notes">Notas</label>
+                <textarea id="pm_notes" rows="3" placeholder="Notas adicionales...">${v('notes')}</textarea>
+            </div>
+        </div>
+        <input type="hidden" id="pm_id" value="${existingData?.id || ''}">
+        <div style="text-align:right;margin-top:8px;padding-top:8px;border-top:1px solid #808080">
+            <button class="default" onclick="saveProjectFromModal()">Guardar</button>
+            <button onclick="document.getElementById('win-dlg-projectModal').remove()">Cancelar</button>
+        </div>`;
+    
+    WM.openDialog('projectModal', title, html, 480, 420);
+}
+
+async function saveProjectFromModal() {
+    const g = id => (document.getElementById('pm_'+id)?.value || '').trim();
+    const code = g('code');
+    
+    if (!code) {
+        alert('El código del proyecto es obligatorio');
+        return;
+    }
+    
+    const existingId = g('id');
+    const data = {
+        code: code,
+        projektnummer: g('projektnummer'),
+        name: g('name'),
+        client: g('client'),
+        location: g('location'),
+        startDate: g('startDate'),
+        endDate: g('endDate'),
+        status: g('status') || 'active',
+        notes: g('notes'),
+        updatedAt: new Date().toISOString()
+    };
+    
+    if (existingId) {
+        data.id = parseInt(existingId);
+    } else {
+        data.createdAt = new Date().toISOString();
+        // Check if code already exists
+        const existing = projects.find(p => p.code === code);
+        if (existing) {
+            alert('Ya existe un proyecto con el código: ' + code);
+            return;
+        }
+    }
+    
+    await dbPut('projects', data);
+    await loadAll();
+    renderProjects();
+    renderOpenWindows();
+    
+    const dlg = document.getElementById('win-dlg-projectModal');
+    if (dlg) dlg.remove();
+    toast(existingId ? 'Proyecto actualizado' : 'Proyecto creado');
+}
+
+async function deleteProject(code) {
+    const proj = projects.find(p => p.code === code);
+    if (!proj) {
+        // Project is auto-generated from CSV, not deletable directly
+        if (!confirm('Este proyecto fue generado desde datos CSV.\n\n¿Eliminar TODOS los datos asociados (clientes, órdenes RA/RD/Fusion, GO Status) de este proyecto?\n\nEsta acción NO se puede deshacer.')) return;
+        
+        // Delete all related data
+        const clientsToDelete = clients.filter(c => c.projectCode === code);
+        for (const c of clientsToDelete) { await dbDelete('clients', c.id); }
+        
+        const raToDelete = ordersRA.filter(o => o.projectCode === code);
+        for (const o of raToDelete) { await dbDelete('orders_ra', o.id); }
+        
+        const rdToDelete = ordersRD.filter(o => o.projectCode === code);
+        for (const o of rdToDelete) { await dbDelete('orders_rd', o.id); }
+        
+        const fusionToDelete = ordersFusion.filter(o => o.projectCode === code);
+        for (const o of fusionToDelete) { await dbDelete('orders_fusion', o.id); }
+        
+        const goToDelete = goStatus.filter(g => g.projectCode === code);
+        for (const g of goToDelete) { await dbDelete('go_status', g.id); }
+        
+        await loadAll();
+        renderProjects();
+        renderOpenWindows();
+        toast('Proyecto y datos eliminados: ' + code);
+        return;
+    }
+    
+    if (!confirm('¿Eliminar el proyecto "' + code + '"?\n\nNota: Los datos importados (clientes, órdenes) NO se eliminarán.')) return;
+    
+    await dbDelete('projects', proj.id);
+    await loadAll();
+    renderProjects();
+    renderOpenWindows();
+    toast('Proyecto eliminado: ' + code);
+}
+
+function editProject(code) {
+    // Check if it's a manual project first
+    const manualProj = projects.find(p => p.code === code);
+    if (manualProj) {
+        openProjectModal(manualProj);
+        return;
+    }
+    
+    // For auto-generated projects, create a modal with existing data from CSV
+    const projData = {
+        code: code,
+        projektnummer: '',
+        name: '',
+        client: '',
+        location: '',
+        startDate: '',
+        endDate: '',
+        status: 'active',
+        notes: ''
+    };
+    
+    // Try to get projektnummer from clients or goStatus
+    const clientWithProj = clients.find(c => c.projectCode === code);
+    if (clientWithProj?.projektnummer) projData.projektnummer = clientWithProj.projektnummer;
+    
+    const goWithProj = goStatus.find(g => g.projectCode === code);
+    if (goWithProj?.projektnummer) projData.projektnummer = goWithProj.projektnummer;
+    if (goWithProj?.projekt) projData.name = goWithProj.projekt;
+    
+    openProjectModal(projData);
 }
 
 // ============================================
@@ -2328,10 +2528,15 @@ function bulkCertify() {
 // ============================================
 // SECTION 16: ORDER MODAL (Win98 dialog)
 // ============================================
-function openOrderModal(type) {
+function openOrderModal(type, existingData = null) {
     editingOrderType = type;
-    const title = type === 'ra' ? 'Agregar Soplado RA' : type === 'rd' ? 'Agregar Soplado RD' : 'Agregar Fusion';
-    const fg = (id, label, tp, ph) => `<div class="field-row-stacked"><label for="om_${id}">${label}</label><input type="${tp||'text'}" id="om_${id}" placeholder="${ph||''}"></div>`;
+    editingOrderId = existingData?.id || null;
+    const isEdit = !!existingData;
+    const title = isEdit 
+        ? (type === 'ra' ? 'Editar Soplado RA' : type === 'rd' ? 'Editar Soplado RD' : 'Editar Fusion')
+        : (type === 'ra' ? 'Agregar Soplado RA' : type === 'rd' ? 'Agregar Soplado RD' : 'Agregar Fusion');
+    const v = (field) => existingData?.[field] || '';
+    const fg = (id, label, tp, ph) => `<div class="field-row-stacked"><label for="om_${id}">${label}</label><input type="${tp||'text'}" id="om_${id}" placeholder="${ph||''}" value="${v(id)}"></div>`;
 
     let html = '<div class="form-grid">';
     if (type === 'ra') {
@@ -2366,17 +2571,42 @@ function openOrderModal(type) {
     WM.openDialog('orderModal', title, html, 440, 380);
 }
 
+function editOrderById(type, id) {
+    let order = null;
+    if (type === 'ra') {
+        order = ordersRA.find(o => o.id === id);
+    } else if (type === 'rd') {
+        order = ordersRD.find(o => o.id === id);
+    } else if (type === 'fusion') {
+        order = ordersFusion.find(o => o.id === id);
+    }
+    
+    if (!order) {
+        toast('Orden no encontrada');
+        return;
+    }
+    
+    openOrderModal(type, order);
+}
+
 async function saveOrderFromModal() {
     const g = id => (document.getElementById('om_'+id)?.value || '').trim();
     const type = editingOrderType;
     const today = new Date().toISOString().split('T')[0];
+    const isEdit = !!editingOrderId;
+
+    let data = {};
+    if (editingOrderId) data.id = editingOrderId;
 
     if (type === 'ra') {
-        await dbPut('orders_ra', { timestamp: today, projectCode: g('projectCode'), technician: g('technician'), startDate: g('startDate'), endDate: g('endDate'), fibers: g('fibers'), meters: g('meters'), color: g('color'), incidents: g('incidents'), photos: g('photos') });
+        data = { ...data, timestamp: today, projectCode: g('projectCode'), technician: g('technician'), startDate: g('startDate'), endDate: g('endDate'), fibers: g('fibers'), meters: g('meters'), color: g('color'), incidents: g('incidents'), photos: g('photos') };
+        await dbPut('orders_ra', data);
     } else if (type === 'rd') {
-        await dbPut('orders_rd', { timestamp: today, projectCode: g('projectCode'), dp: normalizeDP(g('dp')), street: g('street'), ka: g('ka'), technician: g('technician'), startDate: g('startDate'), endDate: g('endDate'), meters: g('meters'), color: g('color'), incidents: g('incidents'), photos: g('photos'), fibers: g('fibers') });
+        data = { ...data, timestamp: today, projectCode: g('projectCode'), dp: normalizeDP(g('dp')), street: g('street'), ka: g('ka'), technician: g('technician'), startDate: g('startDate'), endDate: g('endDate'), meters: g('meters'), color: g('color'), incidents: g('incidents'), photos: g('photos'), fibers: g('fibers') };
+        await dbPut('orders_rd', data);
     } else {
-        await dbPut('orders_fusion', { timestamp: today, projectCode: g('projectCode'), dp: normalizeDP(g('dp')), technician: g('technician'), startDate: g('startDate'), endDate: g('endDate'), splices: g('splices'), incidents: g('incidents'), photos: g('photos'), photoRegistry: g('photoRegistry') });
+        data = { ...data, timestamp: today, projectCode: g('projectCode'), dp: normalizeDP(g('dp')), technician: g('technician'), startDate: g('startDate'), endDate: g('endDate'), splices: g('splices'), incidents: g('incidents'), photos: g('photos'), photoRegistry: g('photoRegistry') };
+        await dbPut('orders_fusion', data);
     }
     await loadAll();
     if (type === 'rd') await autoUpdateFromRD();
@@ -2386,7 +2616,8 @@ async function saveOrderFromModal() {
 
     const dlg = document.getElementById('win-dlg-orderModal');
     if (dlg) dlg.remove();
-    toast('Orden guardada');
+    toast(isEdit ? 'Orden actualizada' : 'Orden creada');
+    editingOrderId = null;
 }
 
 // ============================================
