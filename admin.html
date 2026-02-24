@@ -1,0 +1,1209 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Work Manager - Admin</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg-primary: #0d0d0d;
+            --bg-secondary: #1a1a1a;
+            --bg-tertiary: #252525;
+            --border: #2a2a2a;
+            --text-primary: #ffffff;
+            --text-secondary: #888;
+            --text-muted: #555;
+            --accent: #5e6ad2;
+            --accent-hover: #6e7ae2;
+            --success: #2da44e;
+            --warning: #d29922;
+            --danger: #f85149;
+            --info: #58a6ff;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            width: 240px;
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border);
+            padding: 16px 0;
+            display: flex;
+            flex-direction: column;
+        }
+        .sidebar-header {
+            padding: 0 16px 16px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 8px;
+        }
+        .sidebar-header h1 {
+            font-size: 16px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .sidebar-header h1::before {
+            content: "⚡";
+        }
+        .nav-section {
+            padding: 8px 0;
+        }
+        .nav-section-title {
+            font-size: 11px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            padding: 8px 16px;
+            letter-spacing: 0.5px;
+        }
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 16px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.15s;
+            font-size: 14px;
+        }
+        .nav-item:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+        .nav-item.active {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            border-right: 2px solid var(--accent);
+        }
+        .nav-item .icon { width: 18px; text-align: center; }
+        .nav-item .badge {
+            margin-left: auto;
+            background: var(--bg-tertiary);
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 11px;
+        }
+        
+        /* Main Content */
+        .main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .header {
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .header h2 {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        .header-actions {
+            display: flex;
+            gap: 8px;
+        }
+        .btn {
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            border: 1px solid var(--border);
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            transition: all 0.15s;
+        }
+        .btn:hover { background: #333; }
+        .btn-primary {
+            background: var(--accent);
+            border-color: var(--accent);
+        }
+        .btn-primary:hover { background: var(--accent-hover); }
+        
+        .content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px;
+        }
+        
+        /* KPI Cards */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        .kpi-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 16px;
+        }
+        .kpi-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        .kpi-label {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+        .kpi-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+        .kpi-icon.blue { background: rgba(88, 166, 255, 0.15); }
+        .kpi-icon.green { background: rgba(45, 164, 78, 0.15); }
+        .kpi-icon.orange { background: rgba(210, 153, 34, 0.15); }
+        .kpi-icon.purple { background: rgba(94, 106, 210, 0.15); }
+        .kpi-value {
+            font-size: 28px;
+            font-weight: 600;
+        }
+        .kpi-trend {
+            font-size: 12px;
+            margin-top: 4px;
+        }
+        .kpi-trend.up { color: var(--success); }
+        .kpi-trend.down { color: var(--danger); }
+        
+        /* Cards */
+        .card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            margin-bottom: 16px;
+        }
+        .card-header {
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .card-title {
+            font-size: 14px;
+            font-weight: 600;
+        }
+        .card-body { padding: 16px; }
+        
+        /* Tables */
+        .table-container {
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        th {
+            text-align: left;
+            padding: 10px 12px;
+            color: var(--text-secondary);
+            font-weight: 500;
+            border-bottom: 1px solid var(--border);
+        }
+        td {
+            padding: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+        tr:hover td { background: var(--bg-tertiary); }
+        tr:last-child td { border-bottom: none; }
+        
+        /* Badges */
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+        .badge-blue { background: rgba(88, 166, 255, 0.15); color: var(--info); }
+        .badge-green { background: rgba(45, 164, 78, 0.15); color: var(--success); }
+        .badge-orange { background: rgba(210, 153, 34, 0.15); color: var(--warning); }
+        .badge-red { background: rgba(248, 81, 73, 0.15); color: var(--danger); }
+        .badge-purple { background: rgba(94, 106, 210, 0.15); color: var(--accent); }
+        .badge-gray { background: var(--bg-tertiary); color: var(--text-secondary); }
+        
+        /* Progress */
+        .progress {
+            height: 6px;
+            background: var(--bg-tertiary);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 100%;
+            background: var(--accent);
+            transition: width 0.3s;
+        }
+        .progress-bar.green { background: var(--success); }
+        
+        /* Section visibility */
+        .section { display: none; }
+        .section.active { display: block; }
+        
+        /* Forms */
+        .form-group { margin-bottom: 16px; }
+        .form-label {
+            display: block;
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+        }
+        .form-input {
+            width: 100%;
+            padding: 10px 12px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text-primary);
+            font-size: 14px;
+        }
+        .form-input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+        
+        /* Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.7);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        .modal-overlay.show { display: flex; }
+        .modal {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            width: 100%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow: hidden;
+        }
+        .modal-header {
+            padding: 16px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .modal-title { font-size: 16px; font-weight: 600; }
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 20px;
+            cursor: pointer;
+        }
+        .modal-body { padding: 16px; overflow-y: auto; }
+        .modal-footer {
+            padding: 16px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+        }
+        
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 48px;
+            color: var(--text-secondary);
+        }
+        .empty-state .icon { font-size: 48px; margin-bottom: 16px; }
+        
+        /* Actions column */
+        .actions { display: flex; gap: 4px; }
+        .action-btn {
+            padding: 4px 8px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        .action-btn:hover { background: #333; }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h1>Work Manager</h1>
+        </div>
+        <nav class="nav-section">
+            <div class="nav-section-title">General</div>
+            <div class="nav-item active" data-section="dashboard">
+                <span class="icon">📊</span> Dashboard
+            </div>
+            <div class="nav-item" data-section="projects">
+                <span class="icon">📁</span> Proyectos
+                <span class="badge" id="projectCount">0</span>
+            </div>
+            <div class="nav-item" data-section="works">
+                <span class="icon">🔧</span> Trabajos
+            </div>
+        </nav>
+        <nav class="nav-section">
+            <div class="nav-section-title">Órdenes</div>
+            <div class="nav-item" data-section="soplado-ra">
+                <span class="icon">🔵</span> Soplado RA
+                <span class="badge" id="raCount">0</span>
+            </div>
+            <div class="nav-item" data-section="soplado-rd">
+                <span class="icon">🟠</span> Soplado RD
+                <span class="badge" id="rdCount">0</span>
+            </div>
+            <div class="nav-item" data-section="fusion">
+                <span class="icon">🟣</span> Fusiones
+                <span class="badge" id="fusionCount">0</span>
+            </div>
+        </nav>
+        <nav class="nav-section">
+            <div class="nav-section-title">Configuración</div>
+            <div class="nav-item" data-section="teams">
+                <span class="icon">👥</span> Equipos
+            </div>
+            <div class="nav-item" data-section="prices">
+                <span class="icon">💰</span> Precios
+            </div>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main">
+        <header class="header">
+            <h2 id="sectionTitle">Dashboard</h2>
+            <div class="header-actions">
+                <button class="btn" onclick="loadCSV()">📥 Importar CSV</button>
+                <button class="btn btn-primary" id="newItemBtn" onclick="openNewModal()">+ Nuevo</button>
+            </div>
+        </header>
+        
+        <div class="content">
+            <!-- Dashboard Section -->
+            <section class="section active" id="section-dashboard">
+                <div class="kpi-grid">
+                    <div class="kpi-card">
+                        <div class="kpi-header">
+                            <span class="kpi-label">Proyectos Activos</span>
+                            <div class="kpi-icon blue">📁</div>
+                        </div>
+                        <div class="kpi-value" id="kpiProjects">0</div>
+                        <div class="kpi-trend up">↑ 2 esta semana</div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-header">
+                            <span class="kpi-label">Soplado RA</span>
+                            <div class="kpi-icon green">🔵</div>
+                        </div>
+                        <div class="kpi-value" id="kpiRA">0</div>
+                        <div class="kpi-trend up">↑ 12 hoy</div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-header">
+                            <span class="kpi-label">Soplado RD</span>
+                            <div class="kpi-icon orange">🟠</div>
+                        </div>
+                        <div class="kpi-value" id="kpiRD">0</div>
+                        <div class="kpi-trend up">↑ 8 hoy</div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-header">
+                            <span class="kpi-label">Fusiones</span>
+                            <div class="kpi-icon purple">🟣</div>
+                        </div>
+                        <div class="kpi-value" id="kpiFusion">0</div>
+                        <div class="kpi-trend up">↑ 5 hoy</div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">Trabajos Recientes</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Fecha</th>
+                                        <th>Proyecto</th>
+                                        <th>Tipo</th>
+                                        <th>Técnico</th>
+                                        <th>Estado</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="recentWorksBody">
+                                    <tr><td colspan="5" class="empty-state">Cargando...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Projects Section -->
+            <section class="section" id="section-projects">
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">Todos los Proyectos</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Código</th>
+                                        <th>Nombre</th>
+                                        <th>Cliente</th>
+                                        <th>Estado</th>
+                                        <th>Progreso</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="projectsBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Works Section -->
+            <section class="section" id="section-works">
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">Gestión de Trabajos</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Fecha</th>
+                                        <th>Proyecto</th>
+                                        <th>DP</th>
+                                        <th>Tipo</th>
+                                        <th>Técnico</th>
+                                        <th>Estado</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="worksBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Soplado RA Section -->
+            <section class="section" id="section-soplado-ra">
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">Órdenes Soplado RA</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Fecha</th>
+                                        <th>Proyecto</th>
+                                        <th>Técnico</th>
+                                        <th>Fibras</th>
+                                        <th>Metros</th>
+                                        <th>Color</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="raBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Soplado RD Section -->
+            <section class="section" id="section-soplado-rd">
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">Órdenes Soplado RD</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Fecha</th>
+                                        <th>Proyecto</th>
+                                        <th>DP</th>
+                                        <th>Calle</th>
+                                        <th>KA</th>
+                                        <th>Técnico</th>
+                                        <th>Metros</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="rdBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Fusion Section -->
+            <section class="section" id="section-fusion">
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">Órdenes de Fusión</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Fecha</th>
+                                        <th>Proyecto</th>
+                                        <th>DP</th>
+                                        <th>Técnico</th>
+                                        <th>Fusiones</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="fusionBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Teams Section -->
+            <section class="section" id="section-teams">
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">Equipos de Trabajo</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="empty-state">
+                            <div class="icon">👥</div>
+                            <p>Gestión de equipos próximamente</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Prices Section -->
+            <section class="section" id="section-prices">
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">Tabla de Precios</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Código</th>
+                                        <th>Descripción</th>
+                                        <th>Unidad</th>
+                                        <th>Precio</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="pricesBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+    
+    <!-- Modal -->
+    <div class="modal-overlay" id="modal">
+        <div class="modal">
+            <div class="modal-header">
+                <span class="modal-title" id="modalTitle">Nuevo</span>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBody"></div>
+            <div class="modal-footer">
+                <button class="btn" onclick="closeModal()">Cancelar</button>
+                <button class="btn btn-primary" onclick="saveModal()">Guardar</button>
+            </div>
+        </div>
+    </div>
+    
+    <input type="file" id="csvInput" accept=".csv" style="display:none" onchange="handleCSV(this)">
+
+    <script>
+        // ============================================
+        // DATABASE (shared with win98 app)
+        // ============================================
+        let db = null;
+        let projects = [], clients = [], ordersRA = [], ordersRD = [], ordersFusion = [], goStatus = [];
+        let currentSection = 'dashboard';
+        let editingItem = null;
+        
+        async function openDB() {
+            return new Promise((resolve, reject) => {
+                const req = indexedDB.open('WorkManagerDB', 3);
+                req.onupgradeneeded = e => {
+                    const d = e.target.result;
+                    if (!d.objectStoreNames.contains('orders')) d.createObjectStore('orders', { keyPath:'id', autoIncrement:true });
+                    if (!d.objectStoreNames.contains('clients')) d.createObjectStore('clients', { keyPath:'id', autoIncrement:true });
+                    if (!d.objectStoreNames.contains('orders_ra')) d.createObjectStore('orders_ra', { keyPath:'id', autoIncrement:true });
+                    if (!d.objectStoreNames.contains('orders_rd')) d.createObjectStore('orders_rd', { keyPath:'id', autoIncrement:true });
+                    if (!d.objectStoreNames.contains('orders_fusion')) d.createObjectStore('orders_fusion', { keyPath:'id', autoIncrement:true });
+                    if (!d.objectStoreNames.contains('projects')) d.createObjectStore('projects', { keyPath:'id', autoIncrement:true });
+                    if (!d.objectStoreNames.contains('go_status')) d.createObjectStore('go_status', { keyPath:'id', autoIncrement:true });
+                };
+                req.onsuccess = e => { db = e.target.result; resolve(); };
+                req.onerror = e => reject(e);
+            });
+        }
+        
+        function dbGetAll(store) {
+            return new Promise(r => {
+                const tx = db.transaction(store, 'readonly');
+                tx.objectStore(store).getAll().onsuccess = e => r(e.target.result || []);
+            });
+        }
+        
+        function dbPut(store, obj) {
+            return new Promise(r => {
+                const tx = db.transaction(store, 'readwrite');
+                const s = tx.objectStore(store);
+                const req = obj.id ? s.put(obj) : s.add(obj);
+                req.onsuccess = e => r(e.target.result);
+            });
+        }
+        
+        function dbDelete(store, id) {
+            return new Promise(r => {
+                const tx = db.transaction(store, 'readwrite');
+                tx.objectStore(store).delete(id).onsuccess = () => r();
+            });
+        }
+        
+        async function loadAll() {
+            projects = await dbGetAll('projects');
+            clients = await dbGetAll('clients');
+            ordersRA = await dbGetAll('orders_ra');
+            ordersRD = await dbGetAll('orders_rd');
+            ordersFusion = await dbGetAll('orders_fusion');
+            goStatus = await dbGetAll('go_status');
+            updateCounts();
+            renderCurrentSection();
+        }
+        
+        function updateCounts() {
+            const projectCodes = new Set([
+                ...clients.map(c => c.projectCode),
+                ...ordersRA.map(o => o.projectCode),
+                ...ordersRD.map(o => o.projectCode),
+                ...ordersFusion.map(o => o.projectCode)
+            ].filter(Boolean));
+            
+            document.getElementById('projectCount').textContent = projectCodes.size;
+            document.getElementById('raCount').textContent = ordersRA.length;
+            document.getElementById('rdCount').textContent = ordersRD.length;
+            document.getElementById('fusionCount').textContent = ordersFusion.length;
+            
+            document.getElementById('kpiProjects').textContent = projectCodes.size;
+            document.getElementById('kpiRA').textContent = ordersRA.length;
+            document.getElementById('kpiRD').textContent = ordersRD.length;
+            document.getElementById('kpiFusion').textContent = ordersFusion.length;
+        }
+        
+        // ============================================
+        // NAVIGATION
+        // ============================================
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const section = item.dataset.section;
+                if (!section) return;
+                
+                document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+                item.classList.add('active');
+                
+                document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+                document.getElementById('section-' + section).classList.add('active');
+                
+                const titles = {
+                    'dashboard': 'Dashboard',
+                    'projects': 'Proyectos',
+                    'works': 'Trabajos',
+                    'soplado-ra': 'Soplado RA',
+                    'soplado-rd': 'Soplado RD',
+                    'fusion': 'Fusiones',
+                    'teams': 'Equipos',
+                    'prices': 'Precios'
+                };
+                document.getElementById('sectionTitle').textContent = titles[section] || section;
+                currentSection = section;
+                renderCurrentSection();
+            });
+        });
+        
+        // ============================================
+        // RENDER FUNCTIONS
+        // ============================================
+        function renderCurrentSection() {
+            switch(currentSection) {
+                case 'dashboard': renderDashboard(); break;
+                case 'projects': renderProjects(); break;
+                case 'soplado-ra': renderRA(); break;
+                case 'soplado-rd': renderRD(); break;
+                case 'fusion': renderFusion(); break;
+                case 'works': renderWorks(); break;
+            }
+        }
+        
+        function renderDashboard() {
+            const allWorks = [
+                ...ordersRA.map(o => ({...o, type: 'RA', badge: 'blue'})),
+                ...ordersRD.map(o => ({...o, type: 'RD', badge: 'orange'})),
+                ...ordersFusion.map(o => ({...o, type: 'Fusion', badge: 'purple'}))
+            ].sort((a, b) => (b.startDate || b.timestamp || '').localeCompare(a.startDate || a.timestamp || ''))
+             .slice(0, 10);
+            
+            const tbody = document.getElementById('recentWorksBody');
+            tbody.innerHTML = allWorks.length ? allWorks.map(w => `
+                <tr>
+                    <td>${w.startDate || w.timestamp || '-'}</td>
+                    <td>${w.projectCode || '-'}</td>
+                    <td><span class="badge badge-${w.badge}">${w.type}</span></td>
+                    <td>${w.technician || '-'}</td>
+                    <td><span class="badge badge-green">Completado</span></td>
+                </tr>
+            `).join('') : '<tr><td colspan="5" class="empty-state">No hay trabajos recientes</td></tr>';
+        }
+        
+        function renderProjects() {
+            const projectCodes = [...new Set([
+                ...clients.map(c => c.projectCode),
+                ...ordersRA.map(o => o.projectCode),
+                ...ordersRD.map(o => o.projectCode),
+                ...ordersFusion.map(o => o.projectCode)
+            ].filter(Boolean))];
+            
+            const tbody = document.getElementById('projectsBody');
+            tbody.innerHTML = projectCodes.length ? projectCodes.map(code => {
+                const proj = projects.find(p => p.code === code) || {};
+                const clientCount = clients.filter(c => c.projectCode === code).length;
+                const fertig = clients.filter(c => c.projectCode === code && c.status === 'Fertig').length;
+                const progress = clientCount ? Math.round(fertig / clientCount * 100) : 0;
+                const status = proj.status || 'active';
+                const statusBadge = {
+                    'active': 'badge-green',
+                    'paused': 'badge-orange',
+                    'completed': 'badge-blue',
+                    'cancelled': 'badge-red'
+                }[status] || 'badge-gray';
+                const statusText = {
+                    'active': 'Activo',
+                    'paused': 'Pausado',
+                    'completed': 'Completado',
+                    'cancelled': 'Cancelado'
+                }[status] || status;
+                
+                return `
+                    <tr>
+                        <td><strong>${code}</strong></td>
+                        <td>${proj.name || '-'}</td>
+                        <td>${proj.client || '-'}</td>
+                        <td><span class="badge ${statusBadge}">${statusText}</span></td>
+                        <td style="min-width:120px">
+                            <div class="progress"><div class="progress-bar green" style="width:${progress}%"></div></div>
+                            <small style="color:var(--text-secondary)">${fertig}/${clientCount} (${progress}%)</small>
+                        </td>
+                        <td class="actions">
+                            <button class="action-btn" onclick="editProject('${code}')">✏️</button>
+                            <button class="action-btn" onclick="deleteProject('${code}')">🗑️</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('') : '<tr><td colspan="6" class="empty-state">No hay proyectos</td></tr>';
+        }
+        
+        function renderRA() {
+            const tbody = document.getElementById('raBody');
+            tbody.innerHTML = ordersRA.length ? ordersRA.map(o => `
+                <tr>
+                    <td>${o.startDate || o.timestamp || '-'}</td>
+                    <td>${o.projectCode || '-'}</td>
+                    <td>${o.technician || '-'}</td>
+                    <td>${o.fibers || '-'}</td>
+                    <td>${o.meters || '-'}</td>
+                    <td>${o.color || '-'}</td>
+                    <td class="actions">
+                        <button class="action-btn" onclick="editOrder('ra', ${o.id})">✏️</button>
+                        <button class="action-btn" onclick="deleteOrder('orders_ra', ${o.id})">🗑️</button>
+                    </td>
+                </tr>
+            `).join('') : '<tr><td colspan="7" class="empty-state">No hay órdenes RA</td></tr>';
+        }
+        
+        function renderRD() {
+            const tbody = document.getElementById('rdBody');
+            tbody.innerHTML = ordersRD.length ? ordersRD.map(o => `
+                <tr>
+                    <td>${o.startDate || o.timestamp || '-'}</td>
+                    <td>${o.projectCode || '-'}</td>
+                    <td>${o.dp || '-'}</td>
+                    <td>${o.street || '-'}</td>
+                    <td>${o.ka || '-'}</td>
+                    <td>${o.technician || '-'}</td>
+                    <td>${o.meters || '-'}</td>
+                    <td class="actions">
+                        <button class="action-btn" onclick="editOrder('rd', ${o.id})">✏️</button>
+                        <button class="action-btn" onclick="deleteOrder('orders_rd', ${o.id})">🗑️</button>
+                    </td>
+                </tr>
+            `).join('') : '<tr><td colspan="8" class="empty-state">No hay órdenes RD</td></tr>';
+        }
+        
+        function renderFusion() {
+            const tbody = document.getElementById('fusionBody');
+            tbody.innerHTML = ordersFusion.length ? ordersFusion.map(o => `
+                <tr>
+                    <td>${o.startDate || o.timestamp || '-'}</td>
+                    <td>${o.projectCode || '-'}</td>
+                    <td>${o.dp || '-'}</td>
+                    <td>${o.technician || '-'}</td>
+                    <td>${o.splices || '-'}</td>
+                    <td class="actions">
+                        <button class="action-btn" onclick="editOrder('fusion', ${o.id})">✏️</button>
+                        <button class="action-btn" onclick="deleteOrder('orders_fusion', ${o.id})">🗑️</button>
+                    </td>
+                </tr>
+            `).join('') : '<tr><td colspan="6" class="empty-state">No hay órdenes de fusión</td></tr>';
+        }
+        
+        function renderWorks() {
+            const allWorks = [
+                ...ordersRA.map(o => ({...o, type: 'RA', store: 'orders_ra'})),
+                ...ordersRD.map(o => ({...o, type: 'RD', store: 'orders_rd'})),
+                ...ordersFusion.map(o => ({...o, type: 'Fusion', store: 'orders_fusion'}))
+            ].sort((a, b) => (b.startDate || b.timestamp || '').localeCompare(a.startDate || a.timestamp || ''));
+            
+            const tbody = document.getElementById('worksBody');
+            tbody.innerHTML = allWorks.length ? allWorks.map(w => {
+                const badge = w.type === 'RA' ? 'blue' : w.type === 'RD' ? 'orange' : 'purple';
+                return `
+                    <tr>
+                        <td>${w.startDate || w.timestamp || '-'}</td>
+                        <td>${w.projectCode || '-'}</td>
+                        <td>${w.dp || '-'}</td>
+                        <td><span class="badge badge-${badge}">${w.type}</span></td>
+                        <td>${w.technician || '-'}</td>
+                        <td><span class="badge badge-green">✓</span></td>
+                        <td class="actions">
+                            <button class="action-btn" onclick="editOrder('${w.type.toLowerCase()}', ${w.id})">✏️</button>
+                            <button class="action-btn" onclick="deleteOrder('${w.store}', ${w.id})">🗑️</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('') : '<tr><td colspan="7" class="empty-state">No hay trabajos</td></tr>';
+        }
+        
+        // ============================================
+        // CRUD OPERATIONS
+        // ============================================
+        function openNewModal() {
+            editingItem = null;
+            const modalForms = {
+                'projects': projectForm(),
+                'soplado-ra': raForm(),
+                'soplado-rd': rdForm(),
+                'fusion': fusionForm()
+            };
+            
+            const form = modalForms[currentSection];
+            if (form) {
+                document.getElementById('modalTitle').textContent = 'Nuevo ' + document.getElementById('sectionTitle').textContent;
+                document.getElementById('modalBody').innerHTML = form;
+                document.getElementById('modal').classList.add('show');
+            }
+        }
+        
+        function projectForm(data = {}) {
+            return `
+                <div class="form-group">
+                    <label class="form-label">Código *</label>
+                    <input class="form-input" id="f_code" value="${data.code || ''}" ${data.code ? 'readonly' : ''}>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Nombre</label>
+                    <input class="form-input" id="f_name" value="${data.name || ''}">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Cliente</label>
+                    <input class="form-input" id="f_client" value="${data.client || ''}">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Ubicación</label>
+                    <input class="form-input" id="f_location" value="${data.location || ''}">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Estado</label>
+                    <select class="form-input" id="f_status">
+                        <option value="active" ${data.status==='active'?'selected':''}>Activo</option>
+                        <option value="paused" ${data.status==='paused'?'selected':''}>Pausado</option>
+                        <option value="completed" ${data.status==='completed'?'selected':''}>Completado</option>
+                        <option value="cancelled" ${data.status==='cancelled'?'selected':''}>Cancelado</option>
+                    </select>
+                </div>
+                <input type="hidden" id="f_id" value="${data.id || ''}">
+            `;
+        }
+        
+        function raForm(data = {}) {
+            return `
+                <div class="form-group">
+                    <label class="form-label">Proyecto</label>
+                    <input class="form-input" id="f_projectCode" value="${data.projectCode || ''}">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Técnico</label>
+                    <input class="form-input" id="f_technician" value="${data.technician || ''}">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Fecha</label>
+                    <input class="form-input" type="date" id="f_startDate" value="${data.startDate || ''}">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Fibras</label>
+                    <input class="form-input" type="number" id="f_fibers" value="${data.fibers || ''}">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Metros</label>
+                    <input class="form-input" type="number" id="f_meters" value="${data.meters || ''}">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Color</label>
+                    <input class="form-input" id="f_color" value="${data.color || ''}">
+                </div>
+                <input type="hidden" id="f_id" value="${data.id || ''}">
+            `;
+        }
+        
+        function rdForm(data = {}) {
+            return `
+                <div class="form-group">
+                    <label class="form-label">Proyecto</label>
+                    <input class="form-input" id="f_projectCode" value="${data.projectCode || ''}">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">DP</label>
+                    <input class="form-input" id="f_dp" value="${data.dp || ''}">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Calle</label>
+                    <input class="form-input" id="f_street" value="${data.street || ''}">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">KA</label>
+                    <input class="form-input" id="f_ka" value="${data.ka || ''}">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Técnico</label>
+                    <input class="form-input" id="f_technician" value="${data.technician || ''}">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Metros</label>
+                    <input class="form-input" type="number" id="f_meters" value="${data.meters || ''}">
+                </div>
+                <input type="hidden" id="f_id" value="${data.id || ''}">
+            `;
+        }
+        
+        function fusionForm(data = {}) {
+            return `
+                <div class="form-group">
+                    <label class="form-label">Proyecto</label>
+                    <input class="form-input" id="f_projectCode" value="${data.projectCode || ''}">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">DP</label>
+                    <input class="form-input" id="f_dp" value="${data.dp || ''}">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Técnico</label>
+                    <input class="form-input" id="f_technician" value="${data.technician || ''}">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Fecha</label>
+                    <input class="form-input" type="date" id="f_startDate" value="${data.startDate || ''}">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Fusiones</label>
+                    <input class="form-input" type="number" id="f_splices" value="${data.splices || ''}">
+                </div>
+                <input type="hidden" id="f_id" value="${data.id || ''}">
+            `;
+        }
+        
+        function editProject(code) {
+            const proj = projects.find(p => p.code === code) || { code };
+            editingItem = { type: 'project', data: proj };
+            document.getElementById('modalTitle').textContent = 'Editar Proyecto';
+            document.getElementById('modalBody').innerHTML = projectForm(proj);
+            document.getElementById('modal').classList.add('show');
+        }
+        
+        function editOrder(type, id) {
+            let order, form;
+            if (type === 'ra') {
+                order = ordersRA.find(o => o.id === id);
+                form = raForm(order);
+            } else if (type === 'rd') {
+                order = ordersRD.find(o => o.id === id);
+                form = rdForm(order);
+            } else {
+                order = ordersFusion.find(o => o.id === id);
+                form = fusionForm(order);
+            }
+            
+            editingItem = { type, data: order };
+            document.getElementById('modalTitle').textContent = 'Editar Orden';
+            document.getElementById('modalBody').innerHTML = form;
+            document.getElementById('modal').classList.add('show');
+        }
+        
+        async function deleteOrder(store, id) {
+            if (!confirm('¿Eliminar este registro?')) return;
+            await dbDelete(store, id);
+            await loadAll();
+        }
+        
+        async function deleteProject(code) {
+            if (!confirm('¿Eliminar proyecto ' + code + ' y todos sus datos?')) return;
+            
+            const proj = projects.find(p => p.code === code);
+            if (proj) await dbDelete('projects', proj.id);
+            
+            // Also delete related orders
+            for (const o of ordersRA.filter(o => o.projectCode === code)) await dbDelete('orders_ra', o.id);
+            for (const o of ordersRD.filter(o => o.projectCode === code)) await dbDelete('orders_rd', o.id);
+            for (const o of ordersFusion.filter(o => o.projectCode === code)) await dbDelete('orders_fusion', o.id);
+            for (const c of clients.filter(c => c.projectCode === code)) await dbDelete('clients', c.id);
+            
+            await loadAll();
+        }
+        
+        function closeModal() {
+            document.getElementById('modal').classList.remove('show');
+            editingItem = null;
+        }
+        
+        async function saveModal() {
+            const g = id => (document.getElementById('f_'+id)?.value || '').trim();
+            const existingId = g('id');
+            const today = new Date().toISOString().split('T')[0];
+            
+            if (currentSection === 'projects' || editingItem?.type === 'project') {
+                const data = {
+                    code: g('code'),
+                    name: g('name'),
+                    client: g('client'),
+                    location: g('location'),
+                    status: g('status'),
+                    updatedAt: new Date().toISOString()
+                };
+                if (existingId) data.id = parseInt(existingId);
+                else data.createdAt = new Date().toISOString();
+                await dbPut('projects', data);
+            } else if (currentSection === 'soplado-ra' || editingItem?.type === 'ra') {
+                const data = {
+                    projectCode: g('projectCode'),
+                    technician: g('technician'),
+                    startDate: g('startDate') || today,
+                    fibers: g('fibers'),
+                    meters: g('meters'),
+                    color: g('color'),
+                    timestamp: today
+                };
+                if (existingId) data.id = parseInt(existingId);
+                await dbPut('orders_ra', data);
+            } else if (currentSection === 'soplado-rd' || editingItem?.type === 'rd') {
+                const data = {
+                    projectCode: g('projectCode'),
+                    dp: g('dp'),
+                    street: g('street'),
+                    ka: g('ka'),
+                    technician: g('technician'),
+                    meters: g('meters'),
+                    timestamp: today
+                };
+                if (existingId) data.id = parseInt(existingId);
+                await dbPut('orders_rd', data);
+            } else if (currentSection === 'fusion' || editingItem?.type === 'fusion') {
+                const data = {
+                    projectCode: g('projectCode'),
+                    dp: g('dp'),
+                    technician: g('technician'),
+                    startDate: g('startDate') || today,
+                    splices: g('splices'),
+                    timestamp: today
+                };
+                if (existingId) data.id = parseInt(existingId);
+                await dbPut('orders_fusion', data);
+            }
+            
+            closeModal();
+            await loadAll();
+        }
+        
+        // ============================================
+        // CSV IMPORT
+        // ============================================
+        function loadCSV() {
+            document.getElementById('csvInput').click();
+        }
+        
+        function handleCSV(input) {
+            const file = input.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = async (e) => {
+                // Redirect to main app for CSV processing
+                alert('Para importar CSV, usa la app principal (index.html) que tiene el parser completo.');
+            };
+            reader.readAsText(file);
+            input.value = '';
+        }
+        
+        // ============================================
+        // INIT
+        // ============================================
+        (async () => {
+            await openDB();
+            await loadAll();
+        })();
+    </script>
+</body>
+</html>
