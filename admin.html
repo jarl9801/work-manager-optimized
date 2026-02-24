@@ -10,68 +10,76 @@
             --bg-primary: #0d0d0d;
             --bg-secondary: #1a1a1a;
             --bg-tertiary: #252525;
-            --border: #2a2a2a;
-            --text-primary: #ffffff;
-            --text-secondary: #888;
-            --text-muted: #555;
-            --accent: #5e6ad2;
-            --accent-hover: #6e7ae2;
-            --success: #2da44e;
-            --warning: #d29922;
-            --danger: #f85149;
-            --info: #58a6ff;
+            --bg-hover: #2d2d2d;
+            --border: #333;
+            --border-light: #444;
+            --text-primary: #f5f5f5;
+            --text-secondary: #999;
+            --text-muted: #666;
+            --accent: #6366f1;
+            --accent-hover: #818cf8;
+            --success: #22c55e;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #3b82f6;
         }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif;
             background: var(--bg-primary);
             color: var(--text-primary);
             display: flex;
             min-height: 100vh;
+            font-size: 14px;
+            line-height: 1.5;
         }
         
         /* Sidebar */
         .sidebar {
-            width: 240px;
+            width: 260px;
             background: var(--bg-secondary);
             border-right: 1px solid var(--border);
-            padding: 16px 0;
             display: flex;
             flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
         }
         .sidebar-header {
-            padding: 0 16px 16px;
+            padding: 20px;
             border-bottom: 1px solid var(--border);
-            margin-bottom: 8px;
         }
         .sidebar-header h1 {
-            font-size: 16px;
+            font-size: 18px;
             font-weight: 600;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
         }
-        .sidebar-header h1::before {
-            content: "⚡";
+        .sidebar-header h1::before { content: "⚡"; }
+        .sidebar-header .subtitle {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 4px;
         }
-        .nav-section {
-            padding: 8px 0;
-        }
+        .nav-section { padding: 12px 0; }
         .nav-section-title {
             font-size: 11px;
             text-transform: uppercase;
             color: var(--text-muted);
-            padding: 8px 16px;
+            padding: 8px 20px;
             letter-spacing: 0.5px;
+            font-weight: 500;
         }
         .nav-item {
             display: flex;
             align-items: center;
-            gap: 10px;
-            padding: 8px 16px;
+            gap: 12px;
+            padding: 10px 20px;
             color: var(--text-secondary);
             cursor: pointer;
             transition: all 0.15s;
             font-size: 14px;
+            border-left: 3px solid transparent;
         }
         .nav-item:hover {
             background: var(--bg-tertiary);
@@ -80,23 +88,48 @@
         .nav-item.active {
             background: var(--bg-tertiary);
             color: var(--text-primary);
-            border-right: 2px solid var(--accent);
+            border-left-color: var(--accent);
         }
-        .nav-item .icon { width: 18px; text-align: center; }
+        .nav-item .icon { font-size: 16px; width: 20px; text-align: center; }
         .nav-item .badge {
             margin-left: auto;
-            background: var(--bg-tertiary);
+            background: var(--bg-primary);
             padding: 2px 8px;
-            border-radius: 10px;
+            border-radius: 12px;
             font-size: 11px;
+            font-weight: 500;
+        }
+        .sidebar-footer {
+            margin-top: auto;
+            padding: 16px 20px;
+            border-top: 1px solid var(--border);
+        }
+        .lang-switch {
+            display: flex;
+            gap: 8px;
+        }
+        .lang-btn {
+            padding: 6px 12px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 12px;
+        }
+        .lang-btn.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: white;
         }
         
-        /* Main Content */
+        /* Main */
         .main {
             flex: 1;
+            margin-left: 260px;
             display: flex;
             flex-direction: column;
-            overflow: hidden;
+            min-height: 100vh;
         }
         .header {
             padding: 16px 24px;
@@ -104,18 +137,19 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
+            background: var(--bg-secondary);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
-        .header h2 {
-            font-size: 18px;
-            font-weight: 600;
-        }
-        .header-actions {
-            display: flex;
-            gap: 8px;
-        }
+        .header-left { display: flex; align-items: center; gap: 16px; }
+        .header h2 { font-size: 20px; font-weight: 600; }
+        .header-actions { display: flex; gap: 10px; }
+        
+        /* Buttons */
         .btn {
-            padding: 8px 14px;
-            border-radius: 6px;
+            padding: 8px 16px;
+            border-radius: 8px;
             font-size: 13px;
             font-weight: 500;
             cursor: pointer;
@@ -123,64 +157,58 @@
             background: var(--bg-tertiary);
             color: var(--text-primary);
             transition: all 0.15s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
         }
-        .btn:hover { background: #333; }
-        .btn-primary {
-            background: var(--accent);
-            border-color: var(--accent);
-        }
+        .btn:hover { background: var(--bg-hover); border-color: var(--border-light); }
+        .btn-primary { background: var(--accent); border-color: var(--accent); }
         .btn-primary:hover { background: var(--accent-hover); }
+        .btn-success { background: var(--success); border-color: var(--success); }
+        .btn-sm { padding: 5px 10px; font-size: 12px; }
+        .btn-icon { padding: 6px 8px; }
         
-        .content {
-            flex: 1;
-            overflow-y: auto;
-            padding: 24px;
-        }
+        /* Content */
+        .content { flex: 1; padding: 24px; overflow-y: auto; }
         
-        /* KPI Cards */
+        /* KPIs */
         .kpi-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
             gap: 16px;
             margin-bottom: 24px;
         }
         .kpi-card {
             background: var(--bg-secondary);
             border: 1px solid var(--border);
-            border-radius: 10px;
-            padding: 16px;
+            border-radius: 12px;
+            padding: 20px;
+            transition: border-color 0.15s;
         }
+        .kpi-card:hover { border-color: var(--border-light); }
         .kpi-header {
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             justify-content: space-between;
-            margin-bottom: 8px;
+            margin-bottom: 12px;
         }
-        .kpi-label {
-            font-size: 13px;
-            color: var(--text-secondary);
-        }
+        .kpi-label { font-size: 13px; color: var(--text-secondary); font-weight: 500; }
         .kpi-icon {
-            width: 32px;
-            height: 32px;
-            border-radius: 8px;
+            width: 40px; height: 40px;
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 16px;
+            font-size: 18px;
         }
-        .kpi-icon.blue { background: rgba(88, 166, 255, 0.15); }
-        .kpi-icon.green { background: rgba(45, 164, 78, 0.15); }
-        .kpi-icon.orange { background: rgba(210, 153, 34, 0.15); }
-        .kpi-icon.purple { background: rgba(94, 106, 210, 0.15); }
-        .kpi-value {
-            font-size: 28px;
-            font-weight: 600;
-        }
-        .kpi-trend {
-            font-size: 12px;
-            margin-top: 4px;
-        }
+        .kpi-icon.blue { background: rgba(59, 130, 246, 0.15); }
+        .kpi-icon.green { background: rgba(34, 197, 94, 0.15); }
+        .kpi-icon.orange { background: rgba(245, 158, 11, 0.15); }
+        .kpi-icon.purple { background: rgba(99, 102, 241, 0.15); }
+        .kpi-icon.red { background: rgba(239, 68, 68, 0.15); }
+        .kpi-value { font-size: 32px; font-weight: 700; margin-bottom: 4px; }
+        .kpi-sub { font-size: 12px; color: var(--text-muted); }
+        .kpi-trend { font-size: 12px; display: flex; align-items: center; gap: 4px; }
         .kpi-trend.up { color: var(--success); }
         .kpi-trend.down { color: var(--danger); }
         
@@ -188,163 +216,277 @@
         .card {
             background: var(--bg-secondary);
             border: 1px solid var(--border);
-            border-radius: 10px;
-            margin-bottom: 16px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            overflow: hidden;
         }
         .card-header {
-            padding: 14px 16px;
+            padding: 16px 20px;
             border-bottom: 1px solid var(--border);
             display: flex;
             align-items: center;
             justify-content: space-between;
         }
-        .card-title {
-            font-size: 14px;
-            font-weight: 600;
-        }
-        .card-body { padding: 16px; }
+        .card-title { font-size: 15px; font-weight: 600; }
+        .card-body { padding: 0; }
+        .card-body.padded { padding: 20px; }
         
         /* Tables */
-        .table-container {
-            overflow-x: auto;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 13px;
-        }
+        .table-container { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; }
         th {
             text-align: left;
-            padding: 10px 12px;
+            padding: 12px 16px;
             color: var(--text-secondary);
             font-weight: 500;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            background: var(--bg-tertiary);
             border-bottom: 1px solid var(--border);
+            white-space: nowrap;
         }
         td {
-            padding: 12px;
+            padding: 12px 16px;
             border-bottom: 1px solid var(--border);
+            font-size: 13px;
         }
-        tr:hover td { background: var(--bg-tertiary); }
+        tr:hover td { background: rgba(255,255,255,0.02); }
         tr:last-child td { border-bottom: none; }
         
         /* Badges */
         .badge {
-            display: inline-block;
-            padding: 3px 8px;
-            border-radius: 4px;
-            font-size: 11px;
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 12px;
             font-weight: 500;
         }
-        .badge-blue { background: rgba(88, 166, 255, 0.15); color: var(--info); }
-        .badge-green { background: rgba(45, 164, 78, 0.15); color: var(--success); }
-        .badge-orange { background: rgba(210, 153, 34, 0.15); color: var(--warning); }
-        .badge-red { background: rgba(248, 81, 73, 0.15); color: var(--danger); }
-        .badge-purple { background: rgba(94, 106, 210, 0.15); color: var(--accent); }
+        .badge-blue { background: rgba(59, 130, 246, 0.15); color: var(--info); }
+        .badge-green { background: rgba(34, 197, 94, 0.15); color: var(--success); }
+        .badge-orange { background: rgba(245, 158, 11, 0.15); color: var(--warning); }
+        .badge-red { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
+        .badge-purple { background: rgba(99, 102, 241, 0.15); color: var(--accent); }
         .badge-gray { background: var(--bg-tertiary); color: var(--text-secondary); }
         
         /* Progress */
-        .progress {
-            height: 6px;
-            background: var(--bg-tertiary);
-            border-radius: 3px;
-            overflow: hidden;
-        }
-        .progress-bar {
-            height: 100%;
-            background: var(--accent);
-            transition: width 0.3s;
-        }
+        .progress { height: 8px; background: var(--bg-tertiary); border-radius: 4px; overflow: hidden; }
+        .progress-bar { height: 100%; background: var(--accent); transition: width 0.3s; border-radius: 4px; }
         .progress-bar.green { background: var(--success); }
+        .progress-bar.orange { background: var(--warning); }
+        
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 4px;
+            padding: 4px;
+            background: var(--bg-tertiary);
+            border-radius: 10px;
+            margin-bottom: 16px;
+        }
+        .tab {
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            transition: all 0.15s;
+        }
+        .tab:hover { color: var(--text-primary); }
+        .tab.active { background: var(--bg-secondary); color: var(--text-primary); box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
         
         /* Section visibility */
         .section { display: none; }
         .section.active { display: block; }
         
         /* Forms */
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .form-grid .full-width { grid-column: 1 / -1; }
         .form-group { margin-bottom: 16px; }
-        .form-label {
-            display: block;
-            font-size: 13px;
-            color: var(--text-secondary);
-            margin-bottom: 6px;
-        }
-        .form-input {
+        .form-label { display: block; font-size: 13px; color: var(--text-secondary); margin-bottom: 6px; font-weight: 500; }
+        .form-input, .form-select {
             width: 100%;
-            padding: 10px 12px;
+            padding: 10px 14px;
             background: var(--bg-tertiary);
             border: 1px solid var(--border);
-            border-radius: 6px;
+            border-radius: 8px;
             color: var(--text-primary);
             font-size: 14px;
+            transition: border-color 0.15s;
         }
-        .form-input:focus {
-            outline: none;
-            border-color: var(--accent);
+        .form-input:focus, .form-select:focus { outline: none; border-color: var(--accent); }
+        .form-input::placeholder { color: var(--text-muted); }
+        textarea.form-input { resize: vertical; min-height: 80px; }
+        
+        /* Filters */
+        .filters {
+            display: flex;
+            gap: 12px;
+            padding: 16px 20px;
+            background: var(--bg-tertiary);
+            border-bottom: 1px solid var(--border);
+            flex-wrap: wrap;
         }
+        .filter-input {
+            padding: 8px 12px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 13px;
+            min-width: 180px;
+        }
+        .filter-input:focus { outline: none; border-color: var(--accent); }
         
         /* Modal */
         .modal-overlay {
             display: none;
             position: fixed;
             inset: 0;
-            background: rgba(0,0,0,0.7);
+            background: rgba(0,0,0,0.75);
             align-items: center;
             justify-content: center;
             z-index: 1000;
+            padding: 20px;
         }
         .modal-overlay.show { display: flex; }
         .modal {
             background: var(--bg-secondary);
             border: 1px solid var(--border);
-            border-radius: 12px;
+            border-radius: 16px;
             width: 100%;
-            max-width: 500px;
+            max-width: 560px;
             max-height: 90vh;
             overflow: hidden;
+            display: flex;
+            flex-direction: column;
         }
         .modal-header {
-            padding: 16px;
+            padding: 20px;
             border-bottom: 1px solid var(--border);
             display: flex;
             align-items: center;
             justify-content: space-between;
         }
-        .modal-title { font-size: 16px; font-weight: 600; }
+        .modal-title { font-size: 18px; font-weight: 600; }
         .modal-close {
             background: none;
             border: none;
-            color: var(--text-secondary);
-            font-size: 20px;
+            color: var(--text-muted);
+            font-size: 24px;
             cursor: pointer;
+            padding: 4px;
+            line-height: 1;
         }
-        .modal-body { padding: 16px; overflow-y: auto; }
+        .modal-close:hover { color: var(--text-primary); }
+        .modal-body { padding: 20px; overflow-y: auto; flex: 1; }
         .modal-footer {
-            padding: 16px;
+            padding: 16px 20px;
             border-top: 1px solid var(--border);
             display: flex;
             justify-content: flex-end;
-            gap: 8px;
+            gap: 10px;
         }
+        
+        /* Upload area */
+        .upload-area {
+            border: 2px dashed var(--border);
+            border-radius: 12px;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.15s;
+            margin-bottom: 20px;
+        }
+        .upload-area:hover { border-color: var(--accent); background: rgba(99, 102, 241, 0.05); }
+        .upload-area.dragover { border-color: var(--accent); background: rgba(99, 102, 241, 0.1); }
+        .upload-icon { font-size: 48px; margin-bottom: 12px; }
+        .upload-text { color: var(--text-secondary); margin-bottom: 8px; }
+        .upload-hint { font-size: 12px; color: var(--text-muted); }
+        
+        /* Status indicators */
+        .status-dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+        }
+        .status-dot.green { background: var(--success); }
+        .status-dot.orange { background: var(--warning); }
+        .status-dot.red { background: var(--danger); }
+        .status-dot.blue { background: var(--info); }
+        .status-dot.gray { background: var(--text-muted); }
         
         /* Empty state */
         .empty-state {
             text-align: center;
-            padding: 48px;
-            color: var(--text-secondary);
+            padding: 60px 20px;
+            color: var(--text-muted);
         }
-        .empty-state .icon { font-size: 48px; margin-bottom: 16px; }
+        .empty-state .icon { font-size: 64px; margin-bottom: 16px; opacity: 0.5; }
+        .empty-state p { margin-bottom: 8px; }
         
-        /* Actions column */
-        .actions { display: flex; gap: 4px; }
+        /* Actions */
+        .actions { display: flex; gap: 6px; }
         .action-btn {
-            padding: 4px 8px;
+            padding: 6px 10px;
             background: var(--bg-tertiary);
             border: 1px solid var(--border);
-            border-radius: 4px;
+            border-radius: 6px;
             cursor: pointer;
-            font-size: 12px;
+            font-size: 13px;
+            color: var(--text-secondary);
+            transition: all 0.15s;
         }
-        .action-btn:hover { background: #333; }
+        .action-btn:hover { background: var(--bg-hover); color: var(--text-primary); }
+        .action-btn.danger:hover { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
+        
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            padding: 14px 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s;
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .toast.show { transform: translateY(0); opacity: 1; }
+        .toast.success { border-left: 4px solid var(--success); }
+        .toast.error { border-left: 4px solid var(--danger); }
+        
+        /* Report summary */
+        .report-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .report-stat {
+            background: var(--bg-tertiary);
+            padding: 16px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        .report-stat .value { font-size: 28px; font-weight: 700; }
+        .report-stat .label { font-size: 12px; color: var(--text-secondary); margin-top: 4px; }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar { display: none; }
+            .main { margin-left: 0; }
+            .form-grid { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body>
@@ -352,124 +494,154 @@
     <aside class="sidebar">
         <div class="sidebar-header">
             <h1>Work Manager</h1>
+            <div class="subtitle">Gestión de Fibra Óptica</div>
         </div>
+        
         <nav class="nav-section">
-            <div class="nav-section-title">General</div>
+            <div class="nav-section-title">Principal</div>
             <div class="nav-item active" data-section="dashboard">
                 <span class="icon">📊</span> Dashboard
+            </div>
+            <div class="nav-item" data-section="clients">
+                <span class="icon">👥</span> Clientes
+                <span class="badge" id="clientCount">0</span>
             </div>
             <div class="nav-item" data-section="projects">
                 <span class="icon">📁</span> Proyectos
                 <span class="badge" id="projectCount">0</span>
             </div>
-            <div class="nav-item" data-section="works">
-                <span class="icon">🔧</span> Trabajos
-            </div>
         </nav>
+        
         <nav class="nav-section">
-            <div class="nav-section-title">Órdenes</div>
-            <div class="nav-item" data-section="soplado-ra">
+            <div class="nav-section-title">Órdenes de Trabajo</div>
+            <div class="nav-item" data-section="orders-ra">
                 <span class="icon">🔵</span> Soplado RA
                 <span class="badge" id="raCount">0</span>
             </div>
-            <div class="nav-item" data-section="soplado-rd">
+            <div class="nav-item" data-section="orders-rd">
                 <span class="icon">🟠</span> Soplado RD
                 <span class="badge" id="rdCount">0</span>
             </div>
-            <div class="nav-item" data-section="fusion">
-                <span class="icon">🟣</span> Fusiones
+            <div class="nav-item" data-section="orders-fusion">
+                <span class="icon">🟣</span> Fusión
                 <span class="badge" id="fusionCount">0</span>
             </div>
         </nav>
+        
         <nav class="nav-section">
-            <div class="nav-section-title">Configuración</div>
-            <div class="nav-item" data-section="teams">
-                <span class="icon">👥</span> Equipos
+            <div class="nav-section-title">Reportes</div>
+            <div class="nav-item" data-section="go-status">
+                <span class="icon">📋</span> GO Status
+                <span class="badge" id="goCount">0</span>
+            </div>
+            <div class="nav-item" data-section="invoicing">
+                <span class="icon">💰</span> Facturación
             </div>
             <div class="nav-item" data-section="prices">
-                <span class="icon">💰</span> Precios
+                <span class="icon">📝</span> Precios
             </div>
         </nav>
+        
+        <nav class="nav-section">
+            <div class="nav-section-title">Importar</div>
+            <div class="nav-item" data-section="import">
+                <span class="icon">📥</span> Importar CSV
+            </div>
+        </nav>
+        
+        <div class="sidebar-footer">
+            <div class="lang-switch">
+                <button class="lang-btn active" onclick="setLang('es')">ES</button>
+                <button class="lang-btn" onclick="setLang('de')">DE</button>
+            </div>
+        </div>
     </aside>
 
     <!-- Main Content -->
     <main class="main">
         <header class="header">
-            <h2 id="sectionTitle">Dashboard</h2>
+            <div class="header-left">
+                <h2 id="sectionTitle">Dashboard</h2>
+            </div>
             <div class="header-actions">
-                <button class="btn" onclick="loadCSV()">📥 Importar CSV</button>
+                <button class="btn" onclick="showSection('import')">📥 Importar</button>
                 <button class="btn btn-primary" id="newItemBtn" onclick="openNewModal()">+ Nuevo</button>
             </div>
         </header>
         
         <div class="content">
-            <!-- Dashboard Section -->
+            <!-- Dashboard -->
             <section class="section active" id="section-dashboard">
-                <div class="kpi-grid">
-                    <div class="kpi-card">
-                        <div class="kpi-header">
-                            <span class="kpi-label">Proyectos Activos</span>
-                            <div class="kpi-icon blue">📁</div>
-                        </div>
-                        <div class="kpi-value" id="kpiProjects">0</div>
-                        <div class="kpi-trend up">↑ 2 esta semana</div>
-                    </div>
-                    <div class="kpi-card">
-                        <div class="kpi-header">
-                            <span class="kpi-label">Soplado RA</span>
-                            <div class="kpi-icon green">🔵</div>
-                        </div>
-                        <div class="kpi-value" id="kpiRA">0</div>
-                        <div class="kpi-trend up">↑ 12 hoy</div>
-                    </div>
-                    <div class="kpi-card">
-                        <div class="kpi-header">
-                            <span class="kpi-label">Soplado RD</span>
-                            <div class="kpi-icon orange">🟠</div>
-                        </div>
-                        <div class="kpi-value" id="kpiRD">0</div>
-                        <div class="kpi-trend up">↑ 8 hoy</div>
-                    </div>
-                    <div class="kpi-card">
-                        <div class="kpi-header">
-                            <span class="kpi-label">Fusiones</span>
-                            <div class="kpi-icon purple">🟣</div>
-                        </div>
-                        <div class="kpi-value" id="kpiFusion">0</div>
-                        <div class="kpi-trend up">↑ 5 hoy</div>
-                    </div>
-                </div>
-                
+                <div class="kpi-grid" id="dashboardKPIs"></div>
                 <div class="card">
                     <div class="card-header">
-                        <span class="card-title">Trabajos Recientes</span>
+                        <span class="card-title">Resumen por Proyecto</span>
                     </div>
                     <div class="card-body">
                         <div class="table-container">
                             <table>
                                 <thead>
                                     <tr>
-                                        <th>Fecha</th>
                                         <th>Proyecto</th>
-                                        <th>Tipo</th>
-                                        <th>Técnico</th>
-                                        <th>Estado</th>
+                                        <th>DPs</th>
+                                        <th>Clientes</th>
+                                        <th>Soplado</th>
+                                        <th>Fusión</th>
+                                        <th>Progreso</th>
                                     </tr>
                                 </thead>
-                                <tbody id="recentWorksBody">
-                                    <tr><td colspan="5" class="empty-state">Cargando...</td></tr>
-                                </tbody>
+                                <tbody id="dashboardProjectsBody"></tbody>
                             </table>
                         </div>
                     </div>
                 </div>
             </section>
             
-            <!-- Projects Section -->
+            <!-- Clients -->
+            <section class="section" id="section-clients">
+                <div class="card">
+                    <div class="filters">
+                        <input type="text" class="filter-input" placeholder="🔍 Buscar..." id="clientSearch" oninput="renderClients()">
+                        <select class="filter-input" id="clientProjectFilter" onchange="renderClients()">
+                            <option value="">Todos los proyectos</option>
+                        </select>
+                        <select class="filter-input" id="clientStatusFilter" onchange="renderClients()">
+                            <option value="">Todos los estados</option>
+                            <option value="Fertig">Fertig</option>
+                            <option value="109">109 - Einblasen</option>
+                            <option value="108">108 - Tiefbau</option>
+                            <option value="103">103 - Hausbegehung</option>
+                            <option value="102">102 - Abliefern</option>
+                            <option value="101">101</option>
+                            <option value="100">100 - Termin</option>
+                            <option value="0">0 - Sin progreso</option>
+                        </select>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Proyecto</th>
+                                        <th>DP</th>
+                                        <th>Dirección</th>
+                                        <th>Estado</th>
+                                        <th>Contrato</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="clientsBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Projects -->
             <section class="section" id="section-projects">
                 <div class="card">
                     <div class="card-header">
                         <span class="card-title">Todos los Proyectos</span>
+                        <button class="btn btn-sm" onclick="openProjectModal()">+ Nuevo Proyecto</button>
                     </div>
                     <div class="card-body">
                         <div class="table-container">
@@ -479,8 +651,11 @@
                                         <th>Código</th>
                                         <th>Nombre</th>
                                         <th>Cliente</th>
-                                        <th>Estado</th>
+                                        <th>DPs</th>
+                                        <th>Clientes</th>
+                                        <th>Fertig</th>
                                         <th>Progreso</th>
+                                        <th>Estado</th>
                                         <th>Acciones</th>
                                     </tr>
                                 </thead>
@@ -491,38 +666,14 @@
                 </div>
             </section>
             
-            <!-- Works Section -->
-            <section class="section" id="section-works">
+            <!-- Orders RA -->
+            <section class="section" id="section-orders-ra">
                 <div class="card">
-                    <div class="card-header">
-                        <span class="card-title">Gestión de Trabajos</span>
-                    </div>
-                    <div class="card-body">
-                        <div class="table-container">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>Fecha</th>
-                                        <th>Proyecto</th>
-                                        <th>DP</th>
-                                        <th>Tipo</th>
-                                        <th>Técnico</th>
-                                        <th>Estado</th>
-                                        <th>Acciones</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="worksBody"></tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </section>
-            
-            <!-- Soplado RA Section -->
-            <section class="section" id="section-soplado-ra">
-                <div class="card">
-                    <div class="card-header">
-                        <span class="card-title">Órdenes Soplado RA</span>
+                    <div class="filters">
+                        <input type="text" class="filter-input" placeholder="🔍 Buscar..." id="raSearch" oninput="renderOrdersRA()">
+                        <select class="filter-input" id="raProjectFilter" onchange="renderOrdersRA()">
+                            <option value="">Todos los proyectos</option>
+                        </select>
                     </div>
                     <div class="card-body">
                         <div class="table-container">
@@ -535,6 +686,7 @@
                                         <th>Fibras</th>
                                         <th>Metros</th>
                                         <th>Color</th>
+                                        <th>Incidencias</th>
                                         <th>Acciones</th>
                                     </tr>
                                 </thead>
@@ -545,11 +697,14 @@
                 </div>
             </section>
             
-            <!-- Soplado RD Section -->
-            <section class="section" id="section-soplado-rd">
+            <!-- Orders RD -->
+            <section class="section" id="section-orders-rd">
                 <div class="card">
-                    <div class="card-header">
-                        <span class="card-title">Órdenes Soplado RD</span>
+                    <div class="filters">
+                        <input type="text" class="filter-input" placeholder="🔍 Buscar..." id="rdSearch" oninput="renderOrdersRD()">
+                        <select class="filter-input" id="rdProjectFilter" onchange="renderOrdersRD()">
+                            <option value="">Todos los proyectos</option>
+                        </select>
                     </div>
                     <div class="card-body">
                         <div class="table-container">
@@ -573,11 +728,14 @@
                 </div>
             </section>
             
-            <!-- Fusion Section -->
-            <section class="section" id="section-fusion">
+            <!-- Orders Fusion -->
+            <section class="section" id="section-orders-fusion">
                 <div class="card">
-                    <div class="card-header">
-                        <span class="card-title">Órdenes de Fusión</span>
+                    <div class="filters">
+                        <input type="text" class="filter-input" placeholder="🔍 Buscar..." id="fusionSearch" oninput="renderOrdersFusion()">
+                        <select class="filter-input" id="fusionProjectFilter" onchange="renderOrdersFusion()">
+                            <option value="">Todos los proyectos</option>
+                        </select>
                     </div>
                     <div class="card-body">
                         <div class="table-container">
@@ -589,6 +747,7 @@
                                         <th>DP</th>
                                         <th>Técnico</th>
                                         <th>Fusiones</th>
+                                        <th>Incidencias</th>
                                         <th>Acciones</th>
                                     </tr>
                                 </thead>
@@ -599,26 +758,81 @@
                 </div>
             </section>
             
-            <!-- Teams Section -->
-            <section class="section" id="section-teams">
+            <!-- GO Status -->
+            <section class="section" id="section-go-status">
                 <div class="card">
-                    <div class="card-header">
-                        <span class="card-title">Equipos de Trabajo</span>
+                    <div class="filters">
+                        <input type="text" class="filter-input" placeholder="🔍 Buscar..." id="goSearch" oninput="renderGoStatus()">
+                        <select class="filter-input" id="goProjectFilter" onchange="renderGoStatus()">
+                            <option value="">Todos los proyectos</option>
+                        </select>
                     </div>
                     <div class="card-body">
-                        <div class="empty-state">
-                            <div class="icon">👥</div>
-                            <p>Gestión de equipos próximamente</p>
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Proyecto</th>
+                                        <th>DP</th>
+                                        <th>Einblasen AP-DP</th>
+                                        <th>Spleissen AP</th>
+                                        <th>Spleissen DP</th>
+                                        <th>Estado</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="goBody"></tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
             </section>
             
-            <!-- Prices Section -->
+            <!-- Invoicing -->
+            <section class="section" id="section-invoicing">
+                <div class="kpi-grid">
+                    <div class="kpi-card">
+                        <div class="kpi-header">
+                            <span class="kpi-label">Total Facturado</span>
+                            <div class="kpi-icon green">💰</div>
+                        </div>
+                        <div class="kpi-value" id="invoicedTotal">€0</div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-header">
+                            <span class="kpi-label">Pendiente</span>
+                            <div class="kpi-icon orange">⏳</div>
+                        </div>
+                        <div class="kpi-value" id="pendingTotal">€0</div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">Trabajos por Facturar</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Proyecto</th>
+                                        <th>DP</th>
+                                        <th>Tipo</th>
+                                        <th>Fecha</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="invoicingBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Prices -->
             <section class="section" id="section-prices">
                 <div class="card">
                     <div class="card-header">
-                        <span class="card-title">Tabla de Precios</span>
+                        <span class="card-title">Lista de Precios</span>
                     </div>
                     <div class="card-body">
                         <div class="table-container">
@@ -628,11 +842,48 @@
                                         <th>Código</th>
                                         <th>Descripción</th>
                                         <th>Unidad</th>
-                                        <th>Precio</th>
+                                        <th>Precio Venta</th>
+                                        <th>Precio Costo</th>
+                                        <th>Margen</th>
                                     </tr>
                                 </thead>
                                 <tbody id="pricesBody"></tbody>
                             </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Import -->
+            <section class="section" id="section-import">
+                <div class="card">
+                    <div class="card-body padded">
+                        <div class="upload-area" id="uploadArea">
+                            <div class="upload-icon">📁</div>
+                            <div class="upload-text">Arrastra archivos CSV aquí o haz clic para seleccionar</div>
+                            <div class="upload-hint">Soporta: Clientes GO, GO Status, Soplado RA, Soplado RD, Fusión</div>
+                        </div>
+                        <input type="file" id="csvInput" accept=".csv" multiple style="display:none">
+                        
+                        <div id="importStatus"></div>
+                        
+                        <div class="report-grid" id="importReport" style="display:none">
+                            <div class="report-stat">
+                                <div class="value" id="importTotal">0</div>
+                                <div class="label">Total</div>
+                            </div>
+                            <div class="report-stat">
+                                <div class="value" style="color:var(--success)" id="importNew">0</div>
+                                <div class="label">Nuevos</div>
+                            </div>
+                            <div class="report-stat">
+                                <div class="value" style="color:var(--warning)" id="importUpdated">0</div>
+                                <div class="label">Actualizados</div>
+                            </div>
+                            <div class="report-stat">
+                                <div class="value" style="color:var(--danger)" id="importErrors">0</div>
+                                <div class="label">Errores</div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -655,317 +906,734 @@
         </div>
     </div>
     
-    <input type="file" id="csvInput" accept=".csv" style="display:none" onchange="handleCSV(this)">
+    <!-- Toast -->
+    <div class="toast" id="toast">
+        <span id="toastMsg"></span>
+    </div>
 
+    <!-- Load logic from win98 app -->
+    <script src="data/prices.js"></script>
     <script>
-        // ============================================
-        // DATABASE (shared with win98 app)
-        // ============================================
-        let db = null;
-        let projects = [], clients = [], ordersRA = [], ordersRD = [], ordersFusion = [], goStatus = [];
-        let currentSection = 'dashboard';
-        let editingItem = null;
-        
-        async function openDB() {
-            return new Promise((resolve, reject) => {
-                const req = indexedDB.open('WorkManagerDB', 3);
-                req.onupgradeneeded = e => {
-                    const d = e.target.result;
-                    if (!d.objectStoreNames.contains('orders')) d.createObjectStore('orders', { keyPath:'id', autoIncrement:true });
-                    if (!d.objectStoreNames.contains('clients')) d.createObjectStore('clients', { keyPath:'id', autoIncrement:true });
-                    if (!d.objectStoreNames.contains('orders_ra')) d.createObjectStore('orders_ra', { keyPath:'id', autoIncrement:true });
-                    if (!d.objectStoreNames.contains('orders_rd')) d.createObjectStore('orders_rd', { keyPath:'id', autoIncrement:true });
-                    if (!d.objectStoreNames.contains('orders_fusion')) d.createObjectStore('orders_fusion', { keyPath:'id', autoIncrement:true });
-                    if (!d.objectStoreNames.contains('projects')) d.createObjectStore('projects', { keyPath:'id', autoIncrement:true });
-                    if (!d.objectStoreNames.contains('go_status')) d.createObjectStore('go_status', { keyPath:'id', autoIncrement:true });
-                };
-                req.onsuccess = e => { db = e.target.result; resolve(); };
-                req.onerror = e => reject(e);
-            });
+    // ============================================
+    // ADMIN APP - Modern UI for Work Manager
+    // Uses same IndexedDB as Win98 app
+    // ============================================
+    
+    // I18N
+    let lang = 'es';
+    const i18n = {
+        es: {
+            dashboard: 'Dashboard', clients: 'Clientes', projects: 'Proyectos',
+            ordersRA: 'Soplado RA', ordersRD: 'Soplado RD', ordersFusion: 'Fusión',
+            goStatus: 'GO Status', invoicing: 'Facturación', prices: 'Precios',
+            import: 'Importar CSV', noData: 'Sin datos'
+        },
+        de: {
+            dashboard: 'Dashboard', clients: 'Kunden', projects: 'Projekte',
+            ordersRA: 'Einblasen RA', ordersRD: 'Einblasen RD', ordersFusion: 'Spleissen',
+            goStatus: 'GO Status', invoicing: 'Abrechnung', prices: 'Preise',
+            import: 'CSV Import', noData: 'Keine Daten'
         }
-        
-        function dbGetAll(store) {
-            return new Promise(r => {
-                const tx = db.transaction(store, 'readonly');
-                tx.objectStore(store).getAll().onsuccess = e => r(e.target.result || []);
-            });
-        }
-        
-        function dbPut(store, obj) {
-            return new Promise(r => {
-                const tx = db.transaction(store, 'readwrite');
-                const s = tx.objectStore(store);
-                const req = obj.id ? s.put(obj) : s.add(obj);
-                req.onsuccess = e => r(e.target.result);
-            });
-        }
-        
-        function dbDelete(store, id) {
-            return new Promise(r => {
-                const tx = db.transaction(store, 'readwrite');
-                tx.objectStore(store).delete(id).onsuccess = () => r();
-            });
-        }
-        
-        async function loadAll() {
-            projects = await dbGetAll('projects');
-            clients = await dbGetAll('clients');
-            ordersRA = await dbGetAll('orders_ra');
-            ordersRD = await dbGetAll('orders_rd');
-            ordersFusion = await dbGetAll('orders_fusion');
-            goStatus = await dbGetAll('go_status');
-            updateCounts();
-            renderCurrentSection();
-        }
-        
-        function updateCounts() {
-            const projectCodes = new Set([
-                ...clients.map(c => c.projectCode),
-                ...ordersRA.map(o => o.projectCode),
-                ...ordersRD.map(o => o.projectCode),
-                ...ordersFusion.map(o => o.projectCode)
-            ].filter(Boolean));
-            
-            document.getElementById('projectCount').textContent = projectCodes.size;
-            document.getElementById('raCount').textContent = ordersRA.length;
-            document.getElementById('rdCount').textContent = ordersRD.length;
-            document.getElementById('fusionCount').textContent = ordersFusion.length;
-            
-            document.getElementById('kpiProjects').textContent = projectCodes.size;
-            document.getElementById('kpiRA').textContent = ordersRA.length;
-            document.getElementById('kpiRD').textContent = ordersRD.length;
-            document.getElementById('kpiFusion').textContent = ordersFusion.length;
-        }
-        
-        // ============================================
-        // NAVIGATION
-        // ============================================
-        document.querySelectorAll('.nav-item').forEach(item => {
-            item.addEventListener('click', () => {
-                const section = item.dataset.section;
-                if (!section) return;
-                
-                document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-                item.classList.add('active');
-                
-                document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-                document.getElementById('section-' + section).classList.add('active');
-                
-                const titles = {
-                    'dashboard': 'Dashboard',
-                    'projects': 'Proyectos',
-                    'works': 'Trabajos',
-                    'soplado-ra': 'Soplado RA',
-                    'soplado-rd': 'Soplado RD',
-                    'fusion': 'Fusiones',
-                    'teams': 'Equipos',
-                    'prices': 'Precios'
-                };
-                document.getElementById('sectionTitle').textContent = titles[section] || section;
-                currentSection = section;
-                renderCurrentSection();
-            });
-        });
-        
-        // ============================================
-        // RENDER FUNCTIONS
-        // ============================================
-        function renderCurrentSection() {
-            switch(currentSection) {
-                case 'dashboard': renderDashboard(); break;
-                case 'projects': renderProjects(); break;
-                case 'soplado-ra': renderRA(); break;
-                case 'soplado-rd': renderRD(); break;
-                case 'fusion': renderFusion(); break;
-                case 'works': renderWorks(); break;
-            }
-        }
-        
-        function renderDashboard() {
-            const allWorks = [
-                ...ordersRA.map(o => ({...o, type: 'RA', badge: 'blue'})),
-                ...ordersRD.map(o => ({...o, type: 'RD', badge: 'orange'})),
-                ...ordersFusion.map(o => ({...o, type: 'Fusion', badge: 'purple'}))
-            ].sort((a, b) => (b.startDate || b.timestamp || '').localeCompare(a.startDate || a.timestamp || ''))
-             .slice(0, 10);
-            
-            const tbody = document.getElementById('recentWorksBody');
-            tbody.innerHTML = allWorks.length ? allWorks.map(w => `
-                <tr>
-                    <td>${w.startDate || w.timestamp || '-'}</td>
-                    <td>${w.projectCode || '-'}</td>
-                    <td><span class="badge badge-${w.badge}">${w.type}</span></td>
-                    <td>${w.technician || '-'}</td>
-                    <td><span class="badge badge-green">Completado</span></td>
-                </tr>
-            `).join('') : '<tr><td colspan="5" class="empty-state">No hay trabajos recientes</td></tr>';
-        }
-        
-        function renderProjects() {
-            const projectCodes = [...new Set([
-                ...clients.map(c => c.projectCode),
-                ...ordersRA.map(o => o.projectCode),
-                ...ordersRD.map(o => o.projectCode),
-                ...ordersFusion.map(o => o.projectCode)
-            ].filter(Boolean))];
-            
-            const tbody = document.getElementById('projectsBody');
-            tbody.innerHTML = projectCodes.length ? projectCodes.map(code => {
-                const proj = projects.find(p => p.code === code) || {};
-                const clientCount = clients.filter(c => c.projectCode === code).length;
-                const fertig = clients.filter(c => c.projectCode === code && c.status === 'Fertig').length;
-                const progress = clientCount ? Math.round(fertig / clientCount * 100) : 0;
-                const status = proj.status || 'active';
-                const statusBadge = {
-                    'active': 'badge-green',
-                    'paused': 'badge-orange',
-                    'completed': 'badge-blue',
-                    'cancelled': 'badge-red'
-                }[status] || 'badge-gray';
-                const statusText = {
-                    'active': 'Activo',
-                    'paused': 'Pausado',
-                    'completed': 'Completado',
-                    'cancelled': 'Cancelado'
-                }[status] || status;
-                
-                return `
-                    <tr>
-                        <td><strong>${code}</strong></td>
-                        <td>${proj.name || '-'}</td>
-                        <td>${proj.client || '-'}</td>
-                        <td><span class="badge ${statusBadge}">${statusText}</span></td>
-                        <td style="min-width:120px">
-                            <div class="progress"><div class="progress-bar green" style="width:${progress}%"></div></div>
-                            <small style="color:var(--text-secondary)">${fertig}/${clientCount} (${progress}%)</small>
-                        </td>
-                        <td class="actions">
-                            <button class="action-btn" onclick="editProject('${code}')">✏️</button>
-                            <button class="action-btn" onclick="deleteProject('${code}')">🗑️</button>
-                        </td>
-                    </tr>
-                `;
-            }).join('') : '<tr><td colspan="6" class="empty-state">No hay proyectos</td></tr>';
-        }
-        
-        function renderRA() {
-            const tbody = document.getElementById('raBody');
-            tbody.innerHTML = ordersRA.length ? ordersRA.map(o => `
-                <tr>
-                    <td>${o.startDate || o.timestamp || '-'}</td>
-                    <td>${o.projectCode || '-'}</td>
-                    <td>${o.technician || '-'}</td>
-                    <td>${o.fibers || '-'}</td>
-                    <td>${o.meters || '-'}</td>
-                    <td>${o.color || '-'}</td>
-                    <td class="actions">
-                        <button class="action-btn" onclick="editOrder('ra', ${o.id})">✏️</button>
-                        <button class="action-btn" onclick="deleteOrder('orders_ra', ${o.id})">🗑️</button>
-                    </td>
-                </tr>
-            `).join('') : '<tr><td colspan="7" class="empty-state">No hay órdenes RA</td></tr>';
-        }
-        
-        function renderRD() {
-            const tbody = document.getElementById('rdBody');
-            tbody.innerHTML = ordersRD.length ? ordersRD.map(o => `
-                <tr>
-                    <td>${o.startDate || o.timestamp || '-'}</td>
-                    <td>${o.projectCode || '-'}</td>
-                    <td>${o.dp || '-'}</td>
-                    <td>${o.street || '-'}</td>
-                    <td>${o.ka || '-'}</td>
-                    <td>${o.technician || '-'}</td>
-                    <td>${o.meters || '-'}</td>
-                    <td class="actions">
-                        <button class="action-btn" onclick="editOrder('rd', ${o.id})">✏️</button>
-                        <button class="action-btn" onclick="deleteOrder('orders_rd', ${o.id})">🗑️</button>
-                    </td>
-                </tr>
-            `).join('') : '<tr><td colspan="8" class="empty-state">No hay órdenes RD</td></tr>';
-        }
-        
-        function renderFusion() {
-            const tbody = document.getElementById('fusionBody');
-            tbody.innerHTML = ordersFusion.length ? ordersFusion.map(o => `
-                <tr>
-                    <td>${o.startDate || o.timestamp || '-'}</td>
-                    <td>${o.projectCode || '-'}</td>
-                    <td>${o.dp || '-'}</td>
-                    <td>${o.technician || '-'}</td>
-                    <td>${o.splices || '-'}</td>
-                    <td class="actions">
-                        <button class="action-btn" onclick="editOrder('fusion', ${o.id})">✏️</button>
-                        <button class="action-btn" onclick="deleteOrder('orders_fusion', ${o.id})">🗑️</button>
-                    </td>
-                </tr>
-            `).join('') : '<tr><td colspan="6" class="empty-state">No hay órdenes de fusión</td></tr>';
-        }
-        
-        function renderWorks() {
-            const allWorks = [
-                ...ordersRA.map(o => ({...o, type: 'RA', store: 'orders_ra'})),
-                ...ordersRD.map(o => ({...o, type: 'RD', store: 'orders_rd'})),
-                ...ordersFusion.map(o => ({...o, type: 'Fusion', store: 'orders_fusion'}))
-            ].sort((a, b) => (b.startDate || b.timestamp || '').localeCompare(a.startDate || a.timestamp || ''));
-            
-            const tbody = document.getElementById('worksBody');
-            tbody.innerHTML = allWorks.length ? allWorks.map(w => {
-                const badge = w.type === 'RA' ? 'blue' : w.type === 'RD' ? 'orange' : 'purple';
-                return `
-                    <tr>
-                        <td>${w.startDate || w.timestamp || '-'}</td>
-                        <td>${w.projectCode || '-'}</td>
-                        <td>${w.dp || '-'}</td>
-                        <td><span class="badge badge-${badge}">${w.type}</span></td>
-                        <td>${w.technician || '-'}</td>
-                        <td><span class="badge badge-green">✓</span></td>
-                        <td class="actions">
-                            <button class="action-btn" onclick="editOrder('${w.type.toLowerCase()}', ${w.id})">✏️</button>
-                            <button class="action-btn" onclick="deleteOrder('${w.store}', ${w.id})">🗑️</button>
-                        </td>
-                    </tr>
-                `;
-            }).join('') : '<tr><td colspan="7" class="empty-state">No hay trabajos</td></tr>';
-        }
-        
-        // ============================================
-        // CRUD OPERATIONS
-        // ============================================
-        function openNewModal() {
-            editingItem = null;
-            const modalForms = {
-                'projects': projectForm(),
-                'soplado-ra': raForm(),
-                'soplado-rd': rdForm(),
-                'fusion': fusionForm()
+    };
+    function t(k) { return i18n[lang]?.[k] || k; }
+    function setLang(l) {
+        lang = l;
+        document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.textContent === l.toUpperCase()));
+        renderAll();
+    }
+    
+    // STATE
+    let db = null;
+    let clients = [], ordersRA = [], ordersRD = [], ordersFusion = [], projects = [], goStatus = [];
+    let currentSection = 'dashboard';
+    let editingItem = null;
+    
+    // DATABASE
+    async function openDB() {
+        return new Promise((resolve, reject) => {
+            const req = indexedDB.open('WorkManagerDB', 3);
+            req.onupgradeneeded = e => {
+                const d = e.target.result;
+                ['orders','clients','orders_ra','orders_rd','orders_fusion','projects','go_status'].forEach(store => {
+                    if (!d.objectStoreNames.contains(store)) d.createObjectStore(store, { keyPath:'id', autoIncrement:true });
+                });
             };
+            req.onsuccess = e => { db = e.target.result; resolve(); };
+            req.onerror = e => reject(e);
+        });
+    }
+    
+    function dbGetAll(store) {
+        return new Promise(r => {
+            const tx = db.transaction(store, 'readonly');
+            tx.objectStore(store).getAll().onsuccess = e => r(e.target.result || []);
+        });
+    }
+    
+    function dbPut(store, obj) {
+        return new Promise(r => {
+            const tx = db.transaction(store, 'readwrite');
+            const s = tx.objectStore(store);
+            const req = obj.id ? s.put(obj) : s.add(obj);
+            req.onsuccess = e => r(e.target.result);
+        });
+    }
+    
+    function dbDelete(store, id) {
+        return new Promise(r => {
+            const tx = db.transaction(store, 'readwrite');
+            tx.objectStore(store).delete(id).onsuccess = () => r();
+        });
+    }
+    
+    function dbClear(store) {
+        return new Promise(r => {
+            const tx = db.transaction(store, 'readwrite');
+            tx.objectStore(store).clear().onsuccess = () => r();
+        });
+    }
+    
+    async function loadAll() {
+        clients = await dbGetAll('clients');
+        ordersRA = await dbGetAll('orders_ra');
+        ordersRD = await dbGetAll('orders_rd');
+        ordersFusion = await dbGetAll('orders_fusion');
+        projects = await dbGetAll('projects');
+        goStatus = await dbGetAll('go_status');
+        updateCounts();
+    }
+    
+    // HELPERS
+    function getProjectCodes() {
+        return [...new Set([
+            ...clients.map(c => c.projectCode),
+            ...ordersRA.map(o => o.projectCode),
+            ...ordersRD.map(o => o.projectCode),
+            ...ordersFusion.map(o => o.projectCode),
+            ...goStatus.map(g => g.projectCode)
+        ].filter(Boolean))].sort();
+    }
+    
+    function updateCounts() {
+        const projectCodes = getProjectCodes();
+        document.getElementById('clientCount').textContent = clients.length;
+        document.getElementById('projectCount').textContent = projectCodes.length;
+        document.getElementById('raCount').textContent = ordersRA.length;
+        document.getElementById('rdCount').textContent = ordersRD.length;
+        document.getElementById('fusionCount').textContent = ordersFusion.length;
+        document.getElementById('goCount').textContent = goStatus.length;
+    }
+    
+    function updateProjectFilters() {
+        const codes = getProjectCodes();
+        const options = '<option value="">Todos los proyectos</option>' + codes.map(c => `<option value="${c}">${c}</option>`).join('');
+        ['clientProjectFilter','raProjectFilter','rdProjectFilter','fusionProjectFilter','goProjectFilter'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.innerHTML = options;
+        });
+    }
+    
+    function toast(msg, type = 'success') {
+        const el = document.getElementById('toast');
+        document.getElementById('toastMsg').textContent = msg;
+        el.className = 'toast show ' + type;
+        setTimeout(() => el.classList.remove('show'), 3000);
+    }
+    
+    function statusBadge(status) {
+        const map = {
+            'Fertig': 'green', '109': 'blue', '108': 'purple', '103': 'orange',
+            '102': 'orange', '101': 'gray', '100': 'gray', '0': 'red'
+        };
+        const labels = {
+            'Fertig': 'Fertig', '109': '109 Einblasen', '108': '108 Tiefbau',
+            '103': '103 Hausbegehung', '102': '102 Abliefern', '101': '101',
+            '100': '100 Termin', '0': 'Sin progreso'
+        };
+        return `<span class="badge badge-${map[status] || 'gray'}">${labels[status] || status}</span>`;
+    }
+    
+    // NAVIGATION
+    document.querySelectorAll('.nav-item').forEach(item => {
+        item.addEventListener('click', () => showSection(item.dataset.section));
+    });
+    
+    function showSection(section) {
+        if (!section) return;
+        currentSection = section;
+        
+        document.querySelectorAll('.nav-item').forEach(i => i.classList.toggle('active', i.dataset.section === section));
+        document.querySelectorAll('.section').forEach(s => s.classList.toggle('active', s.id === 'section-' + section));
+        
+        const titles = {
+            'dashboard': 'Dashboard', 'clients': 'Clientes', 'projects': 'Proyectos',
+            'orders-ra': 'Soplado RA', 'orders-rd': 'Soplado RD', 'orders-fusion': 'Fusión',
+            'go-status': 'GO Status', 'invoicing': 'Facturación', 'prices': 'Precios', 'import': 'Importar CSV'
+        };
+        document.getElementById('sectionTitle').textContent = titles[section] || section;
+        
+        renderCurrentSection();
+    }
+    
+    // RENDER
+    function renderAll() {
+        updateCounts();
+        updateProjectFilters();
+        renderCurrentSection();
+    }
+    
+    function renderCurrentSection() {
+        switch(currentSection) {
+            case 'dashboard': renderDashboard(); break;
+            case 'clients': renderClients(); break;
+            case 'projects': renderProjects(); break;
+            case 'orders-ra': renderOrdersRA(); break;
+            case 'orders-rd': renderOrdersRD(); break;
+            case 'orders-fusion': renderOrdersFusion(); break;
+            case 'go-status': renderGoStatus(); break;
+            case 'invoicing': renderInvoicing(); break;
+            case 'prices': renderPrices(); break;
+        }
+    }
+    
+    function renderDashboard() {
+        const projectCodes = getProjectCodes();
+        const totalClients = clients.length;
+        const totalFertig = clients.filter(c => c.status === 'Fertig').length;
+        const totalDPs = new Set(clients.map(c => c.projectCode + '|' + c.dp)).size;
+        
+        document.getElementById('dashboardKPIs').innerHTML = `
+            <div class="kpi-card">
+                <div class="kpi-header"><span class="kpi-label">Proyectos Activos</span><div class="kpi-icon blue">📁</div></div>
+                <div class="kpi-value">${projectCodes.length}</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-header"><span class="kpi-label">Total Clientes</span><div class="kpi-icon purple">👥</div></div>
+                <div class="kpi-value">${totalClients}</div>
+                <div class="kpi-sub">${totalDPs} DPs únicos</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-header"><span class="kpi-label">Completados (Fertig)</span><div class="kpi-icon green">✅</div></div>
+                <div class="kpi-value">${totalFertig}</div>
+                <div class="kpi-sub">${totalClients ? Math.round(totalFertig/totalClients*100) : 0}% del total</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-header"><span class="kpi-label">Órdenes Totales</span><div class="kpi-icon orange">📋</div></div>
+                <div class="kpi-value">${ordersRA.length + ordersRD.length + ordersFusion.length}</div>
+                <div class="kpi-sub">RA: ${ordersRA.length} | RD: ${ordersRD.length} | Fusión: ${ordersFusion.length}</div>
+            </div>
+        `;
+        
+        // Projects summary
+        const tbody = document.getElementById('dashboardProjectsBody');
+        tbody.innerHTML = projectCodes.length ? projectCodes.map(code => {
+            const projClients = clients.filter(c => c.projectCode === code);
+            const dps = new Set(projClients.map(c => c.dp)).size;
+            const fertig = projClients.filter(c => c.status === 'Fertig').length;
+            const progress = projClients.length ? Math.round(fertig / projClients.length * 100) : 0;
+            const raCount = ordersRA.filter(o => o.projectCode === code).length;
+            const rdCount = ordersRD.filter(o => o.projectCode === code).length;
+            const fusionCount = ordersFusion.filter(o => o.projectCode === code).length;
             
-            const form = modalForms[currentSection];
-            if (form) {
-                document.getElementById('modalTitle').textContent = 'Nuevo ' + document.getElementById('sectionTitle').textContent;
-                document.getElementById('modalBody').innerHTML = form;
-                document.getElementById('modal').classList.add('show');
+            return `<tr>
+                <td><strong>${code}</strong></td>
+                <td>${dps}</td>
+                <td>${projClients.length}</td>
+                <td><span class="badge badge-blue">${raCount + rdCount}</span></td>
+                <td><span class="badge badge-purple">${fusionCount}</span></td>
+                <td style="min-width:150px">
+                    <div class="progress"><div class="progress-bar green" style="width:${progress}%"></div></div>
+                    <small style="color:var(--text-muted)">${fertig}/${projClients.length} (${progress}%)</small>
+                </td>
+            </tr>`;
+        }).join('') : '<tr><td colspan="6" class="empty-state">No hay proyectos</td></tr>';
+    }
+    
+    function renderClients() {
+        const search = (document.getElementById('clientSearch')?.value || '').toLowerCase();
+        const projFilter = document.getElementById('clientProjectFilter')?.value || '';
+        const statusFilter = document.getElementById('clientStatusFilter')?.value || '';
+        
+        let filtered = clients;
+        if (search) filtered = filtered.filter(c => 
+            (c.street || '').toLowerCase().includes(search) ||
+            (c.dp || '').toLowerCase().includes(search) ||
+            (c.projectCode || '').toLowerCase().includes(search)
+        );
+        if (projFilter) filtered = filtered.filter(c => c.projectCode === projFilter);
+        if (statusFilter) filtered = filtered.filter(c => c.status === statusFilter);
+        
+        const tbody = document.getElementById('clientsBody');
+        tbody.innerHTML = filtered.length ? filtered.slice(0, 200).map(c => `<tr>
+            <td>${c.projectCode || '-'}</td>
+            <td><strong>${c.dp || '-'}</strong></td>
+            <td>${c.street || ''} ${c.hausnummer || ''}</td>
+            <td>${statusBadge(c.status)}</td>
+            <td>${c.contract === 'R0' ? '<span class="badge badge-green">R0</span>' : c.contract || '-'}</td>
+        </tr>`).join('') : '<tr><td colspan="5" class="empty-state">No hay clientes</td></tr>';
+        
+        if (filtered.length > 200) {
+            tbody.innerHTML += `<tr><td colspan="5" style="text-align:center;color:var(--text-muted)">... y ${filtered.length - 200} más</td></tr>`;
+        }
+    }
+    
+    function renderProjects() {
+        const projectCodes = getProjectCodes();
+        const tbody = document.getElementById('projectsBody');
+        
+        tbody.innerHTML = projectCodes.length ? projectCodes.map(code => {
+            const proj = projects.find(p => p.code === code) || {};
+            const projClients = clients.filter(c => c.projectCode === code);
+            const dps = new Set(projClients.map(c => c.dp)).size;
+            const fertig = projClients.filter(c => c.status === 'Fertig').length;
+            const progress = projClients.length ? Math.round(fertig / projClients.length * 100) : 0;
+            const status = proj.status || 'active';
+            const statusBadgeHtml = {
+                'active': '<span class="badge badge-green">Activo</span>',
+                'paused': '<span class="badge badge-orange">Pausado</span>',
+                'completed': '<span class="badge badge-blue">Completado</span>',
+                'cancelled': '<span class="badge badge-red">Cancelado</span>'
+            }[status] || '<span class="badge badge-gray">-</span>';
+            
+            return `<tr>
+                <td><strong>${code}</strong></td>
+                <td>${proj.name || '-'}</td>
+                <td>${proj.client || '-'}</td>
+                <td>${dps}</td>
+                <td>${projClients.length}</td>
+                <td>${fertig}</td>
+                <td style="min-width:120px">
+                    <div class="progress"><div class="progress-bar green" style="width:${progress}%"></div></div>
+                    <small style="color:var(--text-muted)">${progress}%</small>
+                </td>
+                <td>${statusBadgeHtml}</td>
+                <td class="actions">
+                    <button class="action-btn" onclick="editProject('${code}')">✏️</button>
+                    <button class="action-btn danger" onclick="deleteProject('${code}')">🗑️</button>
+                </td>
+            </tr>`;
+        }).join('') : '<tr><td colspan="9" class="empty-state">No hay proyectos</td></tr>';
+    }
+    
+    function renderOrdersRA() {
+        const search = (document.getElementById('raSearch')?.value || '').toLowerCase();
+        const projFilter = document.getElementById('raProjectFilter')?.value || '';
+        
+        let filtered = ordersRA;
+        if (search) filtered = filtered.filter(o => 
+            (o.projectCode || '').toLowerCase().includes(search) ||
+            (o.technician || '').toLowerCase().includes(search)
+        );
+        if (projFilter) filtered = filtered.filter(o => o.projectCode === projFilter);
+        
+        const tbody = document.getElementById('raBody');
+        tbody.innerHTML = filtered.length ? filtered.map(o => `<tr>
+            <td>${o.startDate || o.timestamp || '-'}</td>
+            <td><strong>${o.projectCode || '-'}</strong></td>
+            <td>${o.technician || '-'}</td>
+            <td>${o.fibers || '-'}</td>
+            <td>${o.meters || '-'}</td>
+            <td>${o.color || '-'}</td>
+            <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis">${o.incidents || '-'}</td>
+            <td class="actions">
+                <button class="action-btn" onclick="editOrder('ra', ${o.id})">✏️</button>
+                <button class="action-btn danger" onclick="deleteOrder('orders_ra', ${o.id})">🗑️</button>
+            </td>
+        </tr>`).join('') : '<tr><td colspan="8" class="empty-state">No hay órdenes RA</td></tr>';
+    }
+    
+    function renderOrdersRD() {
+        const search = (document.getElementById('rdSearch')?.value || '').toLowerCase();
+        const projFilter = document.getElementById('rdProjectFilter')?.value || '';
+        
+        let filtered = ordersRD;
+        if (search) filtered = filtered.filter(o => 
+            (o.projectCode || '').toLowerCase().includes(search) ||
+            (o.dp || '').toLowerCase().includes(search) ||
+            (o.technician || '').toLowerCase().includes(search)
+        );
+        if (projFilter) filtered = filtered.filter(o => o.projectCode === projFilter);
+        
+        const tbody = document.getElementById('rdBody');
+        tbody.innerHTML = filtered.length ? filtered.map(o => `<tr>
+            <td>${o.startDate || o.timestamp || '-'}</td>
+            <td><strong>${o.projectCode || '-'}</strong></td>
+            <td>${o.dp || '-'}</td>
+            <td>${o.street || '-'}</td>
+            <td>${o.ka || '-'}</td>
+            <td>${o.technician || '-'}</td>
+            <td>${o.meters || '-'}</td>
+            <td class="actions">
+                <button class="action-btn" onclick="editOrder('rd', ${o.id})">✏️</button>
+                <button class="action-btn danger" onclick="deleteOrder('orders_rd', ${o.id})">🗑️</button>
+            </td>
+        </tr>`).join('') : '<tr><td colspan="8" class="empty-state">No hay órdenes RD</td></tr>';
+    }
+    
+    function renderOrdersFusion() {
+        const search = (document.getElementById('fusionSearch')?.value || '').toLowerCase();
+        const projFilter = document.getElementById('fusionProjectFilter')?.value || '';
+        
+        let filtered = ordersFusion;
+        if (search) filtered = filtered.filter(o => 
+            (o.projectCode || '').toLowerCase().includes(search) ||
+            (o.dp || '').toLowerCase().includes(search) ||
+            (o.technician || '').toLowerCase().includes(search)
+        );
+        if (projFilter) filtered = filtered.filter(o => o.projectCode === projFilter);
+        
+        const tbody = document.getElementById('fusionBody');
+        tbody.innerHTML = filtered.length ? filtered.map(o => `<tr>
+            <td>${o.startDate || o.timestamp || '-'}</td>
+            <td><strong>${o.projectCode || '-'}</strong></td>
+            <td>${o.dp || '-'}</td>
+            <td>${o.technician || '-'}</td>
+            <td>${o.splices || '-'}</td>
+            <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis">${o.incidents || '-'}</td>
+            <td class="actions">
+                <button class="action-btn" onclick="editOrder('fusion', ${o.id})">✏️</button>
+                <button class="action-btn danger" onclick="deleteOrder('orders_fusion', ${o.id})">🗑️</button>
+            </td>
+        </tr>`).join('') : '<tr><td colspan="7" class="empty-state">No hay órdenes de fusión</td></tr>';
+    }
+    
+    function renderGoStatus() {
+        const search = (document.getElementById('goSearch')?.value || '').toLowerCase();
+        const projFilter = document.getElementById('goProjectFilter')?.value || '';
+        
+        let filtered = goStatus;
+        if (search) filtered = filtered.filter(g => 
+            (g.projectCode || '').toLowerCase().includes(search) ||
+            (g.dp || '').toLowerCase().includes(search)
+        );
+        if (projFilter) filtered = filtered.filter(g => g.projectCode === projFilter);
+        
+        const tbody = document.getElementById('goBody');
+        tbody.innerHTML = filtered.length ? filtered.map(g => {
+            const blowOK = (g.einblasenAPDP || '').toUpperCase().includes('GEREED');
+            const spliceAPOK = (g.spleissenAP || '').toUpperCase().includes('GEREED');
+            const spliceDPOK = (g.spleisseDPbereit || '').toUpperCase().includes('GEREED');
+            const allOK = blowOK && (spliceAPOK || spliceDPOK);
+            
+            return `<tr>
+                <td><strong>${g.projectCode || '-'}</strong></td>
+                <td>${g.dp || '-'}</td>
+                <td>${blowOK ? '<span class="badge badge-green">GEREED</span>' : '<span class="badge badge-gray">-</span>'}</td>
+                <td>${spliceAPOK ? '<span class="badge badge-green">GEREED</span>' : '<span class="badge badge-gray">-</span>'}</td>
+                <td>${spliceDPOK ? '<span class="badge badge-green">GEREED</span>' : '<span class="badge badge-gray">-</span>'}</td>
+                <td>${allOK ? '<span class="badge badge-green">✓ Completo</span>' : '<span class="badge badge-orange">Pendiente</span>'}</td>
+            </tr>`;
+        }).join('') : '<tr><td colspan="6" class="empty-state">No hay datos de GO Status</td></tr>';
+    }
+    
+    function renderInvoicing() {
+        // Simplified invoicing view
+        const allWorks = [
+            ...ordersRD.map(o => ({...o, type: 'RD'})),
+            ...ordersFusion.map(o => ({...o, type: 'Fusion'}))
+        ].filter(w => !w.invoiced);
+        
+        const tbody = document.getElementById('invoicingBody');
+        tbody.innerHTML = allWorks.length ? allWorks.map(w => `<tr>
+            <td>${w.projectCode || '-'}</td>
+            <td>${w.dp || '-'}</td>
+            <td><span class="badge badge-${w.type === 'RD' ? 'orange' : 'purple'}">${w.type}</span></td>
+            <td>${w.startDate || w.timestamp || '-'}</td>
+            <td><button class="btn btn-sm" onclick="markInvoiced('${w.type}', ${w.id})">💰 Facturar</button></td>
+        </tr>`).join('') : '<tr><td colspan="5" class="empty-state">No hay trabajos pendientes de facturar</td></tr>';
+    }
+    
+    function renderPrices() {
+        const tbody = document.getElementById('pricesBody');
+        if (typeof PRICE_LIST === 'undefined' || !PRICE_LIST.length) {
+            tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No hay precios configurados</td></tr>';
+            return;
+        }
+        
+        tbody.innerHTML = PRICE_LIST.map(p => {
+            const margin = p.sale && p.cost ? (p.sale - p.cost) : 0;
+            const marginPct = p.sale ? Math.round(margin / p.sale * 100) : 0;
+            return `<tr>
+                <td><strong>${p.code || '-'}</strong></td>
+                <td>${p.desc || '-'}</td>
+                <td>${p.unit || '-'}</td>
+                <td>€${(p.sale || 0).toFixed(2)}</td>
+                <td>€${(p.cost || 0).toFixed(2)}</td>
+                <td><span class="badge badge-${marginPct > 20 ? 'green' : marginPct > 10 ? 'orange' : 'red'}">${marginPct}%</span></td>
+            </tr>`;
+        }).join('');
+    }
+    
+    // CSV IMPORT
+    function parseCSV(text) {
+        const lines = [];
+        let current = '', inQuote = false, row = [];
+        for (let i = 0; i < text.length; i++) {
+            const c = text[i];
+            if (inQuote) {
+                if (c === '"' && text[i+1] === '"') { current += '"'; i++; }
+                else if (c === '"') { inQuote = false; }
+                else { current += c; }
+            } else {
+                if (c === '"') { inQuote = true; }
+                else if (c === ',') { row.push(current.trim()); current = ''; }
+                else if (c === '\n' || (c === '\r' && text[i+1] === '\n')) {
+                    row.push(current.trim()); current = '';
+                    if (c === '\r') i++;
+                    if (row.some(x => x)) lines.push(row);
+                    row = [];
+                } else { current += c; }
+            }
+        }
+        row.push(current.trim());
+        if (row.some(x => x)) lines.push(row);
+        return lines;
+    }
+    
+    function csvToObjects(lines) {
+        if (lines.length < 2) return [];
+        const headers = lines[0];
+        return lines.slice(1).map(row => {
+            const obj = {};
+            headers.forEach((h, i) => obj[h] = row[i] || '');
+            return obj;
+        });
+    }
+    
+    function detectCSVType(headers) {
+        const h = headers.join(',').toLowerCase().normalize('NFC');
+        if (h.includes('auftragsnummer') && h.includes('anschlussstatus')) return 'clients';
+        if (h.includes('tiefbau fertig') || h.includes('einblasen ap') || h.includes('projekt- nummer')) return 'go_status';
+        if (h.includes('codigo de proyecto') && h.includes('metros soplados') && !h.includes('ka cliente') && !h.includes('calle') && !h.includes('fusiones')) return 'soplado_ra';
+        if (h.includes('código de proyecto') && h.includes('metros soplados') && !h.includes('ka cliente') && !h.includes('calle') && !h.includes('fusiones')) return 'soplado_ra';
+        if (h.includes('fusiones') || h.includes('registro fotografico')) return 'fusion';
+        if (h.includes('ka cliente') || h.includes('ka ') || (h.includes('calle') && h.includes('metros'))) return 'soplado_rd';
+        return null;
+    }
+    
+    function getFieldValue(obj, fieldNames) {
+        for (const name of fieldNames) {
+            if (obj[name]) return obj[name];
+        }
+        return '';
+    }
+    
+    function normalizeDP(raw) {
+        if (!raw) return '';
+        const str = raw.toString().trim().toUpperCase();
+        if (/^\d+$/.test(str)) return 'DP' + str.padStart(3, '0');
+        const m = str.match(/DP[- ]?(\d+)/);
+        if (m) return 'DP' + m[1].padStart(3, '0');
+        return raw.trim();
+    }
+    
+    function extractProjectCode(row) {
+        const dp = row['DP'] || '';
+        const m = dp.match(/(QFF-\d+)/i);
+        return m ? m[1].toUpperCase() : '';
+    }
+    
+    async function smartImport(files) {
+        const statusEl = document.getElementById('importStatus');
+        const reportEl = document.getElementById('importReport');
+        let totalNew = 0, totalUpdated = 0, totalErrors = 0, totalRecords = 0;
+        
+        for (const file of files) {
+            statusEl.innerHTML = `<div style="color:var(--info)">📂 Procesando ${file.name}...</div>`;
+            try {
+                const text = await file.text();
+                const lines = parseCSV(text);
+                if (lines.length < 2) { totalErrors++; continue; }
+                
+                const type = detectCSVType(lines[0]);
+                if (!type) {
+                    statusEl.innerHTML += `<div style="color:var(--warning)">⚠️ ${file.name}: formato no reconocido</div>`;
+                    totalErrors++;
+                    continue;
+                }
+                
+                const objs = csvToObjects(lines);
+                totalRecords += objs.length;
+                
+                const result = await importByType(type, objs);
+                totalNew += result.new || 0;
+                totalUpdated += result.updated || 0;
+                
+                statusEl.innerHTML += `<div style="color:var(--success)">✓ ${file.name}: ${type} (${objs.length} registros)</div>`;
+            } catch (err) {
+                statusEl.innerHTML += `<div style="color:var(--danger)">✗ ${file.name}: ${err.message}</div>`;
+                totalErrors++;
             }
         }
         
-        function projectForm(data = {}) {
-            return `
+        await loadAll();
+        renderAll();
+        
+        reportEl.style.display = 'grid';
+        document.getElementById('importTotal').textContent = totalRecords;
+        document.getElementById('importNew').textContent = totalNew;
+        document.getElementById('importUpdated').textContent = totalUpdated;
+        document.getElementById('importErrors').textContent = totalErrors;
+        
+        toast(`Importación completada: ${totalNew} nuevos, ${totalUpdated} actualizados`);
+    }
+    
+    async function importByType(type, objs) {
+        let newCount = 0, updatedCount = 0;
+        
+        switch(type) {
+            case 'clients':
+                for (const o of objs) {
+                    const dpFull = o['DP'] || '';
+                    const projCode = extractProjectCode(o);
+                    const dpNorm = normalizeDP(dpFull);
+                    const grundNA = (o['GrundNA'] || '').trim();
+                    const anschluss = (o['ANSCHLUSSSTATUS'] || '').toString().trim();
+                    const validStatuses = ['0','100','101','102','103','108','109','Fertig'];
+                    const status = validStatuses.includes(anschluss) ? anschluss : '0';
+                    
+                    const clientData = {
+                        auftrag: o['Auftragsnummer'] || '', projektnummer: o['Projektnummer'] || '',
+                        projectCode: projCode, dp: dpNorm, dpFull: dpFull,
+                        street: o['Straße'] || o['Strasse'] || '', hausnummer: o['Hausnummer'] || '',
+                        hausnummerZusatz: o['Hausnummernzusatz'] || '', contract: grundNA === 'R0' ? 'R0' : grundNA,
+                        status: status, isClient: grundNA === 'R0'
+                    };
+                    
+                    const existing = clients.find(c => c.auftrag && c.auftrag === clientData.auftrag);
+                    if (existing) {
+                        clientData.id = existing.id;
+                        updatedCount++;
+                    } else {
+                        newCount++;
+                    }
+                    await dbPut('clients', clientData);
+                }
+                break;
+                
+            case 'soplado_ra':
+                for (const o of objs) {
+                    const data = {
+                        projectCode: getFieldValue(o, ['Código de Proyecto', 'Codigo de Proyecto', 'Project Code']),
+                        technician: getFieldValue(o, ['Técnico Responsable', 'Tecnico Responsable', 'Técnico']),
+                        startDate: getFieldValue(o, ['Fecha de Inicio', 'Fecha Inicio']),
+                        endDate: getFieldValue(o, ['Fecha de Finalización', 'Fecha Finalizacion']),
+                        fibers: getFieldValue(o, ['Número de Fibras', 'Numero de Fibras', 'Fibras']),
+                        meters: getFieldValue(o, ['Metros Soplados', 'Metros']),
+                        color: getFieldValue(o, ['Color miniducto', 'Color']),
+                        incidents: getFieldValue(o, ['Incidencias (si las hubo)', 'Incidencias']),
+                        timestamp: new Date().toISOString().split('T')[0]
+                    };
+                    await dbPut('orders_ra', data);
+                    newCount++;
+                }
+                break;
+                
+            case 'soplado_rd':
+                for (const o of objs) {
+                    const data = {
+                        projectCode: getFieldValue(o, ['Código de Proyecto', 'Codigo de Proyecto']),
+                        dp: normalizeDP(getFieldValue(o, ['DP', 'Punto de Distribución'])),
+                        street: getFieldValue(o, ['Calle', 'Dirección', 'Direccion', 'Street']),
+                        ka: getFieldValue(o, ['KA Cliente', 'KA', 'KA-Cliente']),
+                        technician: getFieldValue(o, ['Técnico Responsable', 'Tecnico', 'Técnico']),
+                        meters: getFieldValue(o, ['Metros', 'Metros Soplados']),
+                        color: getFieldValue(o, ['Color miniducto', 'Color']),
+                        fibers: getFieldValue(o, ['Fibras', 'Número de Fibras']),
+                        incidents: getFieldValue(o, ['Incidencias', 'Incidencias (si las hubo)']),
+                        timestamp: new Date().toISOString().split('T')[0]
+                    };
+                    await dbPut('orders_rd', data);
+                    newCount++;
+                }
+                break;
+                
+            case 'fusion':
+                for (const o of objs) {
+                    const data = {
+                        projectCode: getFieldValue(o, ['Código de Proyecto', 'Codigo de Proyecto']),
+                        dp: normalizeDP(getFieldValue(o, ['DP', 'Punto de Distribución'])),
+                        technician: getFieldValue(o, ['Técnico Responsable', 'Tecnico']),
+                        startDate: getFieldValue(o, ['Fecha de Inicio', 'Fecha Inicio']),
+                        splices: getFieldValue(o, ['Fusiones', 'Número de Fusiones']),
+                        incidents: getFieldValue(o, ['Incidencias', 'Incidencias (si las hubo)']),
+                        photoRegistry: getFieldValue(o, ['Registro Fotografico', 'Registro Fotográfico']),
+                        timestamp: new Date().toISOString().split('T')[0]
+                    };
+                    await dbPut('orders_fusion', data);
+                    newCount++;
+                }
+                break;
+                
+            case 'go_status':
+                for (const o of objs) {
+                    const data = {
+                        projectCode: getFieldValue(o, ['Projekt- nummer', 'Projektnummer', 'Project Code']),
+                        dp: normalizeDP(getFieldValue(o, ['DP', 'DP-Nummer'])),
+                        einblasenAPDP: getFieldValue(o, ['Einblasen AP-DP', 'Einblasen']),
+                        spleissenAP: getFieldValue(o, ['Spleissen AP', 'Spleißen AP']),
+                        spleisseDPbereit: getFieldValue(o, ['Spleiße DP bereit', 'Spleisse DP bereit']),
+                        projekt: getFieldValue(o, ['Projekt', 'Project']),
+                        projektnummer: getFieldValue(o, ['Projekt- nummer', 'Projektnummer'])
+                    };
+                    
+                    const existing = goStatus.find(g => g.projectCode === data.projectCode && g.dp === data.dp);
+                    if (existing) {
+                        data.id = existing.id;
+                        updatedCount++;
+                    } else {
+                        newCount++;
+                    }
+                    await dbPut('go_status', data);
+                }
+                break;
+        }
+        
+        return { new: newCount, updated: updatedCount };
+    }
+    
+    // CRUD MODALS
+    function openNewModal() {
+        editingItem = null;
+        const forms = {
+            'projects': projectForm(),
+            'orders-ra': raForm(),
+            'orders-rd': rdForm(),
+            'orders-fusion': fusionForm()
+        };
+        
+        const form = forms[currentSection];
+        if (form) {
+            document.getElementById('modalTitle').textContent = 'Nuevo';
+            document.getElementById('modalBody').innerHTML = form;
+            document.getElementById('modal').classList.add('show');
+        } else {
+            toast('Selecciona una sección para crear', 'error');
+        }
+    }
+    
+    function projectForm(data = {}) {
+        return `
+            <div class="form-grid">
                 <div class="form-group">
                     <label class="form-label">Código *</label>
-                    <input class="form-input" id="f_code" value="${data.code || ''}" ${data.code ? 'readonly' : ''}>
+                    <input class="form-input" id="f_code" value="${data.code || ''}" ${data.code ? 'readonly style="opacity:0.7"' : ''} placeholder="QFF-001">
                 </div>
                 <div class="form-group">
+                    <label class="form-label">Projektnummer</label>
+                    <input class="form-input" id="f_projektnummer" value="${data.projektnummer || ''}" placeholder="123456">
+                </div>
+                <div class="form-group full-width">
                     <label class="form-label">Nombre</label>
-                    <input class="form-input" id="f_name" value="${data.name || ''}">
+                    <input class="form-input" id="f_name" value="${data.name || ''}" placeholder="Nombre del proyecto">
                 </div>
                 <div class="form-group">
                     <label class="form-label">Cliente</label>
-                    <input class="form-input" id="f_client" value="${data.client || ''}">
+                    <input class="form-input" id="f_client" value="${data.client || ''}" placeholder="Telekom / ENTEGA">
                 </div>
                 <div class="form-group">
                     <label class="form-label">Ubicación</label>
-                    <input class="form-input" id="f_location" value="${data.location || ''}">
+                    <input class="form-input" id="f_location" value="${data.location || ''}" placeholder="Frankfurt">
                 </div>
                 <div class="form-group">
                     <label class="form-label">Estado</label>
@@ -976,83 +1644,113 @@
                         <option value="cancelled" ${data.status==='cancelled'?'selected':''}>Cancelado</option>
                     </select>
                 </div>
-                <input type="hidden" id="f_id" value="${data.id || ''}">
-            `;
-        }
-        
-        function raForm(data = {}) {
-            return `
+                <div class="form-group full-width">
+                    <label class="form-label">Notas</label>
+                    <textarea class="form-input" id="f_notes" placeholder="Notas adicionales...">${data.notes || ''}</textarea>
+                </div>
+            </div>
+            <input type="hidden" id="f_id" value="${data.id || ''}">
+        `;
+    }
+    
+    function raForm(data = {}) {
+        return `
+            <div class="form-grid">
                 <div class="form-group">
                     <label class="form-label">Proyecto</label>
-                    <input class="form-input" id="f_projectCode" value="${data.projectCode || ''}">
+                    <input class="form-input" id="f_projectCode" value="${data.projectCode || ''}" placeholder="QFF-001">
                 </div>
                 <div class="form-group">
                     <label class="form-label">Técnico</label>
-                    <input class="form-input" id="f_technician" value="${data.technician || ''}">
+                    <input class="form-input" id="f_technician" value="${data.technician || ''}" placeholder="Nombre">
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Fecha</label>
+                    <label class="form-label">Fecha Inicio</label>
                     <input class="form-input" type="date" id="f_startDate" value="${data.startDate || ''}">
                 </div>
                 <div class="form-group">
+                    <label class="form-label">Fecha Fin</label>
+                    <input class="form-input" type="date" id="f_endDate" value="${data.endDate || ''}">
+                </div>
+                <div class="form-group">
                     <label class="form-label">Fibras</label>
-                    <input class="form-input" type="number" id="f_fibers" value="${data.fibers || ''}">
+                    <input class="form-input" type="number" id="f_fibers" value="${data.fibers || ''}" placeholder="12">
                 </div>
                 <div class="form-group">
                     <label class="form-label">Metros</label>
-                    <input class="form-input" type="number" id="f_meters" value="${data.meters || ''}">
+                    <input class="form-input" type="number" id="f_meters" value="${data.meters || ''}" placeholder="500">
                 </div>
-                <div class="form-group">
-                    <label class="form-label">Color</label>
-                    <input class="form-input" id="f_color" value="${data.color || ''}">
+                <div class="form-group full-width">
+                    <label class="form-label">Color Miniducto</label>
+                    <input class="form-input" id="f_color" value="${data.color || ''}" placeholder="Azul">
                 </div>
-                <input type="hidden" id="f_id" value="${data.id || ''}">
-            `;
-        }
-        
-        function rdForm(data = {}) {
-            return `
+                <div class="form-group full-width">
+                    <label class="form-label">Incidencias</label>
+                    <textarea class="form-input" id="f_incidents" placeholder="Describir incidencias...">${data.incidents || ''}</textarea>
+                </div>
+            </div>
+            <input type="hidden" id="f_id" value="${data.id || ''}">
+        `;
+    }
+    
+    function rdForm(data = {}) {
+        return `
+            <div class="form-grid">
                 <div class="form-group">
                     <label class="form-label">Proyecto</label>
-                    <input class="form-input" id="f_projectCode" value="${data.projectCode || ''}">
+                    <input class="form-input" id="f_projectCode" value="${data.projectCode || ''}" placeholder="QFF-001">
                 </div>
                 <div class="form-group">
                     <label class="form-label">DP</label>
-                    <input class="form-input" id="f_dp" value="${data.dp || ''}">
+                    <input class="form-input" id="f_dp" value="${data.dp || ''}" placeholder="DP055">
                 </div>
-                <div class="form-group">
+                <div class="form-group full-width">
                     <label class="form-label">Calle</label>
-                    <input class="form-input" id="f_street" value="${data.street || ''}">
+                    <input class="form-input" id="f_street" value="${data.street || ''}" placeholder="Hauptstraße 15">
                 </div>
                 <div class="form-group">
-                    <label class="form-label">KA</label>
-                    <input class="form-input" id="f_ka" value="${data.ka || ''}">
+                    <label class="form-label">KA Cliente</label>
+                    <input class="form-input" id="f_ka" value="${data.ka || ''}" placeholder="KA28">
                 </div>
                 <div class="form-group">
                     <label class="form-label">Técnico</label>
-                    <input class="form-input" id="f_technician" value="${data.technician || ''}">
+                    <input class="form-input" id="f_technician" value="${data.technician || ''}" placeholder="Nombre">
                 </div>
                 <div class="form-group">
                     <label class="form-label">Metros</label>
-                    <input class="form-input" type="number" id="f_meters" value="${data.meters || ''}">
+                    <input class="form-input" type="number" id="f_meters" value="${data.meters || ''}" placeholder="50">
                 </div>
-                <input type="hidden" id="f_id" value="${data.id || ''}">
-            `;
-        }
-        
-        function fusionForm(data = {}) {
-            return `
+                <div class="form-group">
+                    <label class="form-label">Fibras</label>
+                    <input class="form-input" type="number" id="f_fibers" value="${data.fibers || ''}" placeholder="2">
+                </div>
+                <div class="form-group full-width">
+                    <label class="form-label">Color</label>
+                    <input class="form-input" id="f_color" value="${data.color || ''}" placeholder="Azul">
+                </div>
+                <div class="form-group full-width">
+                    <label class="form-label">Incidencias</label>
+                    <textarea class="form-input" id="f_incidents" placeholder="Describir incidencias...">${data.incidents || ''}</textarea>
+                </div>
+            </div>
+            <input type="hidden" id="f_id" value="${data.id || ''}">
+        `;
+    }
+    
+    function fusionForm(data = {}) {
+        return `
+            <div class="form-grid">
                 <div class="form-group">
                     <label class="form-label">Proyecto</label>
-                    <input class="form-input" id="f_projectCode" value="${data.projectCode || ''}">
+                    <input class="form-input" id="f_projectCode" value="${data.projectCode || ''}" placeholder="QFF-001">
                 </div>
                 <div class="form-group">
                     <label class="form-label">DP</label>
-                    <input class="form-input" id="f_dp" value="${data.dp || ''}">
+                    <input class="form-input" id="f_dp" value="${data.dp || ''}" placeholder="DP030">
                 </div>
                 <div class="form-group">
                     <label class="form-label">Técnico</label>
-                    <input class="form-input" id="f_technician" value="${data.technician || ''}">
+                    <input class="form-input" id="f_technician" value="${data.technician || ''}" placeholder="Nombre">
                 </div>
                 <div class="form-group">
                     <label class="form-label">Fecha</label>
@@ -1060,150 +1758,158 @@
                 </div>
                 <div class="form-group">
                     <label class="form-label">Fusiones</label>
-                    <input class="form-input" type="number" id="f_splices" value="${data.splices || ''}">
+                    <input class="form-input" type="number" id="f_splices" value="${data.splices || ''}" placeholder="24">
                 </div>
-                <input type="hidden" id="f_id" value="${data.id || ''}">
-            `;
+                <div class="form-group full-width">
+                    <label class="form-label">Incidencias</label>
+                    <textarea class="form-input" id="f_incidents" placeholder="Describir incidencias...">${data.incidents || ''}</textarea>
+                </div>
+            </div>
+            <input type="hidden" id="f_id" value="${data.id || ''}">
+        `;
+    }
+    
+    function openProjectModal(data = null) {
+        editingItem = data ? { type: 'project', data } : null;
+        document.getElementById('modalTitle').textContent = data ? 'Editar Proyecto' : 'Nuevo Proyecto';
+        document.getElementById('modalBody').innerHTML = projectForm(data || {});
+        document.getElementById('modal').classList.add('show');
+    }
+    
+    function editProject(code) {
+        const proj = projects.find(p => p.code === code) || { code };
+        openProjectModal(proj);
+    }
+    
+    function editOrder(type, id) {
+        let order, form;
+        if (type === 'ra') {
+            order = ordersRA.find(o => o.id === id);
+            form = raForm(order);
+        } else if (type === 'rd') {
+            order = ordersRD.find(o => o.id === id);
+            form = rdForm(order);
+        } else {
+            order = ordersFusion.find(o => o.id === id);
+            form = fusionForm(order);
         }
         
-        function editProject(code) {
-            const proj = projects.find(p => p.code === code) || { code };
-            editingItem = { type: 'project', data: proj };
-            document.getElementById('modalTitle').textContent = 'Editar Proyecto';
-            document.getElementById('modalBody').innerHTML = projectForm(proj);
-            document.getElementById('modal').classList.add('show');
-        }
+        editingItem = { type, data: order };
+        document.getElementById('modalTitle').textContent = 'Editar Orden';
+        document.getElementById('modalBody').innerHTML = form;
+        document.getElementById('modal').classList.add('show');
+    }
+    
+    function closeModal() {
+        document.getElementById('modal').classList.remove('show');
+        editingItem = null;
+    }
+    
+    async function saveModal() {
+        const g = id => (document.getElementById('f_'+id)?.value || '').trim();
+        const existingId = g('id');
+        const today = new Date().toISOString().split('T')[0];
         
-        function editOrder(type, id) {
-            let order, form;
-            if (type === 'ra') {
-                order = ordersRA.find(o => o.id === id);
-                form = raForm(order);
-            } else if (type === 'rd') {
-                order = ordersRD.find(o => o.id === id);
-                form = rdForm(order);
-            } else {
-                order = ordersFusion.find(o => o.id === id);
-                form = fusionForm(order);
-            }
+        if (currentSection === 'projects' || editingItem?.type === 'project') {
+            const code = g('code');
+            if (!code) { toast('El código es obligatorio', 'error'); return; }
             
-            editingItem = { type, data: order };
-            document.getElementById('modalTitle').textContent = 'Editar Orden';
-            document.getElementById('modalBody').innerHTML = form;
-            document.getElementById('modal').classList.add('show');
-        }
-        
-        async function deleteOrder(store, id) {
-            if (!confirm('¿Eliminar este registro?')) return;
-            await dbDelete(store, id);
-            await loadAll();
-        }
-        
-        async function deleteProject(code) {
-            if (!confirm('¿Eliminar proyecto ' + code + ' y todos sus datos?')) return;
-            
-            const proj = projects.find(p => p.code === code);
-            if (proj) await dbDelete('projects', proj.id);
-            
-            // Also delete related orders
-            for (const o of ordersRA.filter(o => o.projectCode === code)) await dbDelete('orders_ra', o.id);
-            for (const o of ordersRD.filter(o => o.projectCode === code)) await dbDelete('orders_rd', o.id);
-            for (const o of ordersFusion.filter(o => o.projectCode === code)) await dbDelete('orders_fusion', o.id);
-            for (const c of clients.filter(c => c.projectCode === code)) await dbDelete('clients', c.id);
-            
-            await loadAll();
-        }
-        
-        function closeModal() {
-            document.getElementById('modal').classList.remove('show');
-            editingItem = null;
-        }
-        
-        async function saveModal() {
-            const g = id => (document.getElementById('f_'+id)?.value || '').trim();
-            const existingId = g('id');
-            const today = new Date().toISOString().split('T')[0];
-            
-            if (currentSection === 'projects' || editingItem?.type === 'project') {
-                const data = {
-                    code: g('code'),
-                    name: g('name'),
-                    client: g('client'),
-                    location: g('location'),
-                    status: g('status'),
-                    updatedAt: new Date().toISOString()
-                };
-                if (existingId) data.id = parseInt(existingId);
-                else data.createdAt = new Date().toISOString();
-                await dbPut('projects', data);
-            } else if (currentSection === 'soplado-ra' || editingItem?.type === 'ra') {
-                const data = {
-                    projectCode: g('projectCode'),
-                    technician: g('technician'),
-                    startDate: g('startDate') || today,
-                    fibers: g('fibers'),
-                    meters: g('meters'),
-                    color: g('color'),
-                    timestamp: today
-                };
-                if (existingId) data.id = parseInt(existingId);
-                await dbPut('orders_ra', data);
-            } else if (currentSection === 'soplado-rd' || editingItem?.type === 'rd') {
-                const data = {
-                    projectCode: g('projectCode'),
-                    dp: g('dp'),
-                    street: g('street'),
-                    ka: g('ka'),
-                    technician: g('technician'),
-                    meters: g('meters'),
-                    timestamp: today
-                };
-                if (existingId) data.id = parseInt(existingId);
-                await dbPut('orders_rd', data);
-            } else if (currentSection === 'fusion' || editingItem?.type === 'fusion') {
-                const data = {
-                    projectCode: g('projectCode'),
-                    dp: g('dp'),
-                    technician: g('technician'),
-                    startDate: g('startDate') || today,
-                    splices: g('splices'),
-                    timestamp: today
-                };
-                if (existingId) data.id = parseInt(existingId);
-                await dbPut('orders_fusion', data);
-            }
-            
-            closeModal();
-            await loadAll();
-        }
-        
-        // ============================================
-        // CSV IMPORT
-        // ============================================
-        function loadCSV() {
-            document.getElementById('csvInput').click();
-        }
-        
-        function handleCSV(input) {
-            const file = input.files[0];
-            if (!file) return;
-            
-            const reader = new FileReader();
-            reader.onload = async (e) => {
-                // Redirect to main app for CSV processing
-                alert('Para importar CSV, usa la app principal (index.html) que tiene el parser completo.');
+            const data = {
+                code, projektnummer: g('projektnummer'), name: g('name'),
+                client: g('client'), location: g('location'), status: g('status'),
+                notes: g('notes'), updatedAt: new Date().toISOString()
             };
-            reader.readAsText(file);
-            input.value = '';
+            if (existingId) data.id = parseInt(existingId);
+            else data.createdAt = new Date().toISOString();
+            await dbPut('projects', data);
+        } else if (currentSection === 'orders-ra' || editingItem?.type === 'ra') {
+            const data = {
+                projectCode: g('projectCode'), technician: g('technician'),
+                startDate: g('startDate') || today, endDate: g('endDate'),
+                fibers: g('fibers'), meters: g('meters'), color: g('color'),
+                incidents: g('incidents'), timestamp: today
+            };
+            if (existingId) data.id = parseInt(existingId);
+            await dbPut('orders_ra', data);
+        } else if (currentSection === 'orders-rd' || editingItem?.type === 'rd') {
+            const data = {
+                projectCode: g('projectCode'), dp: normalizeDP(g('dp')),
+                street: g('street'), ka: g('ka'), technician: g('technician'),
+                meters: g('meters'), fibers: g('fibers'), color: g('color'),
+                incidents: g('incidents'), timestamp: today
+            };
+            if (existingId) data.id = parseInt(existingId);
+            await dbPut('orders_rd', data);
+        } else if (currentSection === 'orders-fusion' || editingItem?.type === 'fusion') {
+            const data = {
+                projectCode: g('projectCode'), dp: normalizeDP(g('dp')),
+                technician: g('technician'), startDate: g('startDate') || today,
+                splices: g('splices'), incidents: g('incidents'), timestamp: today
+            };
+            if (existingId) data.id = parseInt(existingId);
+            await dbPut('orders_fusion', data);
         }
         
-        // ============================================
-        // INIT
-        // ============================================
-        (async () => {
-            await openDB();
+        closeModal();
+        await loadAll();
+        renderAll();
+        toast('Guardado correctamente');
+    }
+    
+    async function deleteOrder(store, id) {
+        if (!confirm('¿Eliminar este registro?')) return;
+        await dbDelete(store, id);
+        await loadAll();
+        renderAll();
+        toast('Registro eliminado');
+    }
+    
+    async function deleteProject(code) {
+        if (!confirm(`¿Eliminar proyecto ${code}?\n\nEsto NO elimina los datos asociados (clientes, órdenes).`)) return;
+        const proj = projects.find(p => p.code === code);
+        if (proj) await dbDelete('projects', proj.id);
+        await loadAll();
+        renderAll();
+        toast('Proyecto eliminado');
+    }
+    
+    async function markInvoiced(type, id) {
+        const store = type === 'RD' ? 'orders_rd' : 'orders_fusion';
+        const list = type === 'RD' ? ordersRD : ordersFusion;
+        const order = list.find(o => o.id === id);
+        if (order) {
+            order.invoiced = true;
+            order.invoicedAt = new Date().toISOString();
+            await dbPut(store, order);
             await loadAll();
-        })();
+            renderAll();
+            toast('Marcado como facturado');
+        }
+    }
+    
+    // UPLOAD HANDLING
+    const uploadArea = document.getElementById('uploadArea');
+    const csvInput = document.getElementById('csvInput');
+    
+    uploadArea.addEventListener('click', () => csvInput.click());
+    uploadArea.addEventListener('dragover', e => { e.preventDefault(); uploadArea.classList.add('dragover'); });
+    uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('dragover'));
+    uploadArea.addEventListener('drop', e => {
+        e.preventDefault();
+        uploadArea.classList.remove('dragover');
+        if (e.dataTransfer.files.length) smartImport(e.dataTransfer.files);
+    });
+    csvInput.addEventListener('change', () => {
+        if (csvInput.files.length) smartImport(csvInput.files);
+        csvInput.value = '';
+    });
+    
+    // INIT
+    (async () => {
+        await openDB();
+        await loadAll();
+        renderAll();
+    })();
     </script>
 </body>
 </html>
