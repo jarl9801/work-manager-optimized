@@ -1066,6 +1066,78 @@
         adminRender();
     };
     
+    // Override showImportReport to show in admin modal
+    let lastImportReport = null;
+    window.showImportReport = function(type, newOrders, duplicates, missing) {
+        lastImportReport = { type, newOrders, duplicates, missing, timestamp: new Date().toLocaleString() };
+        
+        const typeNames = { soplado_ra: 'Soplado RA', soplado_rd: 'Soplado RD', fusion: 'Fusión' };
+        const total = newOrders.length + duplicates.length;
+        
+        // Build discrepancies - work done but not in GO
+        const discrepancies = [];
+        const goByProjDP = {};
+        goStatus.forEach(g => { goByProjDP[(g.projectCode || '') + '|' + g.dp] = g; });
+        
+        if (type === 'soplado_rd' || type === 'fusion') {
+            const orders = type === 'soplado_rd' ? ordersRD : ordersFusion;
+            orders.forEach(o => {
+                const g = goByProjDP[(o.projectCode || '') + '|' + o.dp];
+                if (!g) {
+                    discrepancies.push({ dp: o.dp, project: o.projectCode, issue: 'DP no encontrado en GO' });
+                } else if (type === 'soplado_rd' && !g.einblasenAPDP?.toUpperCase().includes('GEREED')) {
+                    discrepancies.push({ dp: o.dp, project: o.projectCode, issue: 'Soplado hecho, NO GEREED en GO' });
+                } else if (type === 'fusion' && !g.spleissenAP?.toUpperCase().includes('GEREED') && !g.spleisseDPbereit?.toUpperCase().includes('GEREED')) {
+                    discrepancies.push({ dp: o.dp, project: o.projectCode, issue: 'Fusión hecha, NO GEREED en GO' });
+                }
+            });
+        }
+        
+        let html = `
+            <div class="report-grid">
+                <div class="report-stat"><div class="value">${total}</div><div class="label">Total CSV</div></div>
+                <div class="report-stat"><div class="value" style="color:var(--success)">${newOrders.length}</div><div class="label">Nuevas</div></div>
+                <div class="report-stat"><div class="value" style="color:var(--warning)">${duplicates.length}</div><div class="label">Ya existían</div></div>
+                <div class="report-stat"><div class="value" style="color:var(--danger)">${missing.length}</div><div class="label">GEREED sin orden</div></div>
+            </div>
+        `;
+        
+        if (discrepancies.length > 0) {
+            html += `<div style="margin-top:16px;padding:12px;background:rgba(239,68,68,0.1);border:1px solid var(--danger);border-radius:8px">
+                <strong style="color:var(--danger)">⚠️ ${discrepancies.length} trabajos SIN GEREED en GO:</strong>
+                <ul style="margin:8px 0 0 20px;font-size:13px">
+                    ${discrepancies.slice(0,10).map(d => `<li><strong>${d.project} ${d.dp}</strong>: ${d.issue}</li>`).join('')}
+                    ${discrepancies.length > 10 ? `<li>... y ${discrepancies.length - 10} más</li>` : ''}
+                </ul>
+            </div>`;
+        }
+        
+        if (missing.length > 0) {
+            html += `<div style="margin-top:16px;padding:12px;background:rgba(245,158,11,0.1);border:1px solid var(--warning);border-radius:8px">
+                <strong style="color:var(--warning)">📋 ${missing.length} GEREED en GO pero SIN orden cargada:</strong>
+                <ul style="margin:8px 0 0 20px;font-size:13px">
+                    ${missing.slice(0,10).map(m => `<li>${m}</li>`).join('')}
+                    ${missing.length > 10 ? `<li>... y ${missing.length - 10} más</li>` : ''}
+                </ul>
+            </div>`;
+        }
+        
+        if (newOrders.length > 0) {
+            html += `<details style="margin-top:16px"><summary style="cursor:pointer;color:var(--success)">✓ ${newOrders.length} órdenes importadas</summary>
+                <ul style="margin:8px 0 0 20px;font-size:12px;max-height:150px;overflow-y:auto">
+                    ${newOrders.map(o => `<li>${o}</li>`).join('')}
+                </ul>
+            </details>`;
+        }
+        
+        document.getElementById('adminModalTitle').textContent = 'Reporte de Importación - ' + (typeNames[type] || type);
+        document.getElementById('adminModalBody').innerHTML = html;
+        document.querySelector('#adminModal .modal-footer').innerHTML = '<button class="btn btn-primary" onclick="closeAdminModal()">Cerrar</button>';
+        document.getElementById('adminModal').classList.add('show');
+        
+        adminToast(`${typeNames[type] || type}: ${newOrders.length} nuevas, ${discrepancies.length} sin GEREED`);
+    };
+    
     // Init - wait for win98 to load DB then render
     (async function init() {
         // win98-app.js initializes on DOMContentLoaded
