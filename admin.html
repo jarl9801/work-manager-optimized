@@ -807,20 +807,32 @@
         if (proj) filtered = filtered.filter(g => g.projectCode === proj);
         if (statusFilter === 'complete') filtered = filtered.filter(g => {
             const blow = (g.einblasenAPDP || '').toUpperCase().includes('GEREED');
-            const splice = (g.spleissenAP || '').toUpperCase().includes('GEREED') || (g.spleisseDPbereit || '').toUpperCase().includes('GEREED');
-            return blow && splice;
+            const spliceAP = (g.spleissenAP || '').toUpperCase().includes('GEREED');
+            const spliceDP = (g.spleisseDPbereit || '').toUpperCase().includes('GEREED');
+            return blow && spliceAP && spliceDP; // Los 3
         });
         if (statusFilter === 'pending') filtered = filtered.filter(g => {
             const blow = (g.einblasenAPDP || '').toUpperCase().includes('GEREED');
-            const splice = (g.spleissenAP || '').toUpperCase().includes('GEREED') || (g.spleisseDPbereit || '').toUpperCase().includes('GEREED');
-            return !(blow && splice);
+            const spliceAP = (g.spleissenAP || '').toUpperCase().includes('GEREED');
+            const spliceDP = (g.spleisseDPbereit || '').toUpperCase().includes('GEREED');
+            return !(blow && spliceAP && spliceDP);
         });
         
         document.getElementById('goTableBody').innerHTML = filtered.length ? filtered.map(g => {
             const blow = (g.einblasenAPDP || '').toUpperCase().includes('GEREED');
             const spliceAP = (g.spleissenAP || '').toUpperCase().includes('GEREED');
             const spliceDP = (g.spleisseDPbereit || '').toUpperCase().includes('GEREED');
-            const complete = blow && (spliceAP || spliceDP);
+            const complete = blow && spliceAP && spliceDP; // Los 3 deben tener GEREED
+            const parcial = (blow || spliceAP || spliceDP) && !complete;
+            
+            let statusHtml;
+            if (complete) {
+                statusHtml = '<span class="badge badge-green">✓ Completo</span>';
+            } else if (parcial) {
+                statusHtml = '<span class="badge badge-orange">Parcial</span>';
+            } else {
+                statusHtml = '<span class="badge badge-gray">Pendiente</span>';
+            }
             
             return `<tr>
                 <td><strong>${g.projectCode || '-'}</strong></td>
@@ -828,7 +840,7 @@
                 <td>${blow ? '<span class="badge badge-green">GEREED</span>' : '<span class="badge badge-gray">-</span>'}</td>
                 <td>${spliceAP ? '<span class="badge badge-green">GEREED</span>' : '<span class="badge badge-gray">-</span>'}</td>
                 <td>${spliceDP ? '<span class="badge badge-green">GEREED</span>' : '<span class="badge badge-gray">-</span>'}</td>
-                <td>${complete ? '<span class="badge badge-green">✓ Completo</span>' : '<span class="badge badge-orange">Pendiente</span>'}</td>
+                <td>${statusHtml}</td>
             </tr>`;
         }).join('') : '<tr><td colspan="6" class="empty-state">No hay datos de GO Status</td></tr>';
     }
