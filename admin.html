@@ -267,6 +267,33 @@
 
     <!-- Load win98 app logic (all the same functions) -->
     <script src="data/prices.js"></script>
+    
+    <!-- Override showImportReport BEFORE loading win98-app.js -->
+    <script>
+    // Store for import reports
+    window.lastImportReport = null;
+    window.adminShowImportReport = null; // Will be set later
+    
+    // Pre-define showImportReport to intercept win98's version
+    window.showImportReport = function(type, newOrders, duplicates, missing) {
+        // Store the report data
+        window.lastImportReport = { type, newOrders, duplicates, missing, timestamp: new Date().toLocaleString() };
+        
+        // If admin's handler is ready, use it
+        if (window.adminShowImportReport) {
+            window.adminShowImportReport(type, newOrders, duplicates, missing);
+        } else {
+            console.log('Import report:', type, newOrders.length, 'new,', duplicates.length, 'dups,', missing.length, 'missing');
+        }
+    };
+    
+    // Stub WM to prevent errors
+    window.WM = window.WM || {
+        openDialog: function() {},
+        windows: new Map()
+    };
+    </script>
+    
     <script src="js/win98-app.js"></script>
     
     <script>
@@ -1066,10 +1093,9 @@
         adminRender();
     };
     
-    // Override showImportReport to show in admin modal
-    let lastImportReport = null;
-    window.showImportReport = function(type, newOrders, duplicates, missing) {
-        lastImportReport = { type, newOrders, duplicates, missing, timestamp: new Date().toLocaleString() };
+    // Set up the admin import report handler
+    window.adminShowImportReport = function(type, newOrders, duplicates, missing) {
+        window.lastImportReport = { type, newOrders, duplicates, missing, timestamp: new Date().toLocaleString() };
         
         const typeNames = { soplado_ra: 'Soplado RA', soplado_rd: 'Soplado RD', fusion: 'Fusión' };
         const total = newOrders.length + duplicates.length;
