@@ -363,24 +363,73 @@
     
     function renderDashboard() {
         const projectCodes = getProjectCodes();
-        const totalFertig = clients.filter(c => c.status === 'Fertig').length;
-        const totalDPs = new Set(clients.map(c => c.projectCode + '|' + c.dp)).size;
+        
+        // Build GO status lookup
+        const goByProjDP = {};
+        goStatus.forEach(g => { goByProjDP[(g.projectCode || '') + '|' + g.dp] = g; });
+        
+        // Calculate real GEREED totals
+        let totalGereed = 0;
+        let totalWarnings = 0;
+        const allDPs = new Set();
+        
+        projectCodes.forEach(code => {
+            const dpsSet = new Set([
+                ...clients.filter(c => c.projectCode === code).map(c => c.dp),
+                ...goStatus.filter(g => g.projectCode === code).map(g => g.dp)
+            ].filter(Boolean));
+            
+            dpsSet.forEach(dp => {
+                allDPs.add(code + '|' + dp);
+                const g = goByProjDP[code + '|' + dp];
+                const blowOK = g?.einblasenAPDP?.toUpperCase().includes('GEREED');
+                const spliceAPOK = g?.spleissenAP?.toUpperCase().includes('GEREED');
+                const spliceDPOK = g?.spleisseDPbereit?.toUpperCase().includes('GEREED');
+                const allGO = blowOK && spliceAPOK && spliceDPOK;
+                
+                const hasRD = ordersRD.some(o => o.projectCode === code && o.dp === dp);
+                const hasFusion = ordersFusion.some(o => o.projectCode === code && o.dp === dp);
+                
+                if (allGO) totalGereed++;
+                if ((hasRD && !blowOK) || (hasFusion && !spliceAPOK && !spliceDPOK)) totalWarnings++;
+            });
+        });
         
         let projectRows = projectCodes.map(code => {
             const projClients = clients.filter(c => c.projectCode === code);
-            const dps = new Set(projClients.map(c => c.dp)).size;
-            const fertig = projClients.filter(c => c.status === 'Fertig').length;
-            const progress = projClients.length ? Math.round(fertig / projClients.length * 100) : 0;
+            const dpsSet = new Set([
+                ...projClients.map(c => c.dp),
+                ...goStatus.filter(g => g.projectCode === code).map(g => g.dp)
+            ].filter(Boolean));
+            const dps = dpsSet.size;
+            
             const ra = ordersRA.filter(o => o.projectCode === code).length;
             const rd = ordersRD.filter(o => o.projectCode === code).length;
             const fusion = ordersFusion.filter(o => o.projectCode === code).length;
             
-            // GO status check
-            const goEntries = goStatus.filter(g => g.projectCode === code);
-            const goComplete = goEntries.filter(g => 
-                (g.einblasenAPDP || '').toUpperCase().includes('GEREED') &&
-                ((g.spleissenAP || '').toUpperCase().includes('GEREED') || (g.spleisseDPbereit || '').toUpperCase().includes('GEREED'))
-            ).length;
+            // Calculate GEREED per project
+            let projGereed = 0;
+            let projWarnings = 0;
+            dpsSet.forEach(dp => {
+                const g = goByProjDP[code + '|' + dp];
+                const blowOK = g?.einblasenAPDP?.toUpperCase().includes('GEREED');
+                const spliceAPOK = g?.spleissenAP?.toUpperCase().includes('GEREED');
+                const spliceDPOK = g?.spleisseDPbereit?.toUpperCase().includes('GEREED');
+                const allGO = blowOK && spliceAPOK && spliceDPOK;
+                
+                const hasRD = ordersRD.some(o => o.projectCode === code && o.dp === dp);
+                const hasFusion = ordersFusion.some(o => o.projectCode === code && o.dp === dp);
+                
+                if (allGO) projGereed++;
+                if ((hasRD && !blowOK) || (hasFusion && !spliceAPOK && !spliceDPOK)) projWarnings++;
+            });
+            
+            const progress = dps ? Math.round(projGereed / dps * 100) : 0;
+            const goStatusHtml = projWarnings > 0 
+                ? `<span class="badge badge-red">⚠️ ${projWarnings}</span>`
+                : projGereed === dps && dps > 0 
+                    ? '<span class="badge badge-green">✓</span>'
+                    : `<span class="badge badge-orange">${projGereed}/${dps}</span>`;
             
             return `<tr>
                 <td><strong>${code}</strong></td>
@@ -388,10 +437,10 @@
                 <td>${projClients.length}</td>
                 <td><span class="badge badge-blue">${ra}</span> <span class="badge badge-orange">${rd}</span></td>
                 <td><span class="badge badge-purple">${fusion}</span></td>
-                <td><span class="badge badge-green">${goComplete}/${goEntries.length}</span></td>
+                <td>${goStatusHtml}</td>
                 <td style="min-width:150px">
-                    <div class="progress"><div class="progress-bar green" style="width:${progress}%"></div></div>
-                    <small style="color:var(--text-muted)">${fertig}/${projClients.length} (${progress}%)</small>
+                    <div class="progress"><div class="progress-bar ${progress === 100 ? 'green' : ''}" style="width:${progress}%"></div></div>
+                    <small style="color:var(--text-muted)">${projGereed}/${dps} (${progress}%)</small>
                 </td>
             </tr>`;
         }).join('');
@@ -405,19 +454,26 @@
                     <div class="kpi-value">${projectCodes.length}</div>
                 </div>
                 <div class="kpi-card">
-                    <div class="kpi-header"><span class="kpi-label">Clientes</span><div class="kpi-icon purple">👥</div></div>
-                    <div class="kpi-value">${clients.length}</div>
-                    <div class="kpi-sub">${totalDPs} DPs</div>
+                    <div class="kpi-header"><span class="kpi-label">DPs Totales</span><div class="kpi-icon purple">📍</div></div>
+                    <div class="kpi-value">${allDPs.size}</div>
+                    <div class="kpi-sub">${clients.length} clientes</div>
                 </div>
                 <div class="kpi-card">
-                    <div class="kpi-header"><span class="kpi-label">Fertig</span><div class="kpi-icon green">✅</div></div>
-                    <div class="kpi-value">${totalFertig}</div>
-                    <div class="kpi-sub">${clients.length ? Math.round(totalFertig/clients.length*100) : 0}%</div>
+                    <div class="kpi-header"><span class="kpi-label">GEREED Completo</span><div class="kpi-icon green">✅</div></div>
+                    <div class="kpi-value">${totalGereed}</div>
+                    <div class="kpi-sub">${allDPs.size ? Math.round(totalGereed/allDPs.size*100) : 0}% de DPs</div>
                 </div>
                 <div class="kpi-card">
-                    <div class="kpi-header"><span class="kpi-label">Órdenes</span><div class="kpi-icon orange">📋</div></div>
+                    <div class="kpi-header"><span class="kpi-label">⚠️ Alertas</span><div class="kpi-icon ${totalWarnings > 0 ? 'red' : 'green'}">⚡</div></div>
+                    <div class="kpi-value" style="color:${totalWarnings > 0 ? 'var(--danger)' : 'var(--success)'}">${totalWarnings}</div>
+                    <div class="kpi-sub">${totalWarnings > 0 ? 'Trabajo sin GEREED' : 'Todo sincronizado'}</div>
+                </div>
+            </div>
+            <div class="kpi-grid" style="margin-bottom:24px">
+                <div class="kpi-card">
+                    <div class="kpi-header"><span class="kpi-label">Órdenes Totales</span><div class="kpi-icon orange">📋</div></div>
                     <div class="kpi-value">${ordersRA.length + ordersRD.length + ordersFusion.length}</div>
-                    <div class="kpi-sub">RA: ${ordersRA.length} | RD: ${ordersRD.length} | F: ${ordersFusion.length}</div>
+                    <div class="kpi-sub">RA: ${ordersRA.length} | RD: ${ordersRD.length} | Fusión: ${ordersFusion.length}</div>
                 </div>
             </div>
             <div class="card">
@@ -498,14 +554,69 @@
     
     function renderProjects() {
         const projectCodes = getProjectCodes();
+        
+        // Build GO status lookup
+        const goByProjDP = {};
+        goStatus.forEach(g => { goByProjDP[(g.projectCode || '') + '|' + g.dp] = g; });
+        
         const rows = projectCodes.map(code => {
             const proj = projects.find(p => p.code === code) || {};
             const projClients = clients.filter(c => c.projectCode === code);
-            const dps = new Set(projClients.map(c => c.dp)).size;
-            const fertig = projClients.filter(c => c.status === 'Fertig').length;
-            const progress = projClients.length ? Math.round(fertig / projClients.length * 100) : 0;
-            const status = proj.status || 'active';
-            const statusHtml = { 'active': '<span class="badge badge-green">Activo</span>', 'paused': '<span class="badge badge-orange">Pausado</span>', 'completed': '<span class="badge badge-blue">Completado</span>', 'cancelled': '<span class="badge badge-red">Cancelado</span>' }[status] || '';
+            const dpsSet = new Set([
+                ...projClients.map(c => c.dp),
+                ...goStatus.filter(g => g.projectCode === code).map(g => g.dp)
+            ].filter(Boolean));
+            const dps = dpsSet.size;
+            
+            // Calculate real GEREED status per DP
+            let totalGereed = 0;
+            let totalParcial = 0;
+            let totalFaltaGO = 0;
+            let warnings = [];
+            
+            dpsSet.forEach(dp => {
+                const g = goByProjDP[code + '|' + dp];
+                const blowOK = g?.einblasenAPDP?.toUpperCase().includes('GEREED');
+                const spliceAPOK = g?.spleissenAP?.toUpperCase().includes('GEREED');
+                const spliceDPOK = g?.spleisseDPbereit?.toUpperCase().includes('GEREED');
+                
+                const hasRD = ordersRD.some(o => o.projectCode === code && (typeof normalizeDP === 'function' ? normalizeDP(o.dp) === normalizeDP(dp) : o.dp === dp));
+                const hasFusion = ordersFusion.some(o => o.projectCode === code && (typeof normalizeDP === 'function' ? normalizeDP(o.dp) === normalizeDP(dp) : o.dp === dp));
+                
+                const allGO = blowOK && spliceAPOK && spliceDPOK;
+                const anyGO = blowOK || spliceAPOK || spliceDPOK;
+                
+                if (allGO) {
+                    totalGereed++;
+                } else if (anyGO) {
+                    totalParcial++;
+                    // Check for warnings
+                    if (hasRD && !blowOK) warnings.push(`${dp}: Soplado sin GEREED`);
+                    if (hasFusion && !spliceAPOK && !spliceDPOK) warnings.push(`${dp}: Fusión sin GEREED`);
+                } else if (hasRD || hasFusion) {
+                    totalFaltaGO++;
+                    if (hasRD) warnings.push(`${dp}: Soplado hecho, falta GO`);
+                    if (hasFusion) warnings.push(`${dp}: Fusión hecha, falta GO`);
+                }
+            });
+            
+            // Status based on GO, not just client field
+            const fertigReal = totalGereed;
+            const progressReal = dps ? Math.round(totalGereed / dps * 100) : 0;
+            
+            // Project status badge
+            let goStatusHtml;
+            if (warnings.length > 0) {
+                goStatusHtml = `<span class="badge badge-red" title="${warnings.slice(0,3).join('\n')}">⚠️ ${warnings.length} alertas</span>`;
+            } else if (totalGereed === dps && dps > 0) {
+                goStatusHtml = '<span class="badge badge-green">✓ Completo</span>';
+            } else if (totalParcial > 0) {
+                goStatusHtml = `<span class="badge badge-orange">Parcial (${totalParcial})</span>`;
+            } else if (totalFaltaGO > 0) {
+                goStatusHtml = `<span class="badge badge-red">Falta GO (${totalFaltaGO})</span>`;
+            } else {
+                goStatusHtml = '<span class="badge badge-gray">Pendiente</span>';
+            }
             
             return `<tr>
                 <td><strong>${code}</strong></td>
@@ -513,9 +624,9 @@
                 <td>${proj.client || '-'}</td>
                 <td>${dps}</td>
                 <td>${projClients.length}</td>
-                <td>${fertig}</td>
-                <td style="min-width:120px"><div class="progress"><div class="progress-bar green" style="width:${progress}%"></div></div><small style="color:var(--text-muted)">${progress}%</small></td>
-                <td>${statusHtml}</td>
+                <td style="color:${fertigReal === dps && dps > 0 ? 'var(--success)' : 'inherit'}">${fertigReal}/${dps}</td>
+                <td style="min-width:120px"><div class="progress"><div class="progress-bar ${progressReal === 100 ? 'green' : ''}" style="width:${progressReal}%"></div></div><small style="color:var(--text-muted)">${progressReal}%</small></td>
+                <td>${goStatusHtml}</td>
                 <td class="actions">
                     <button class="action-btn" onclick="editProjectAdmin('${code}')">✏️</button>
                     <button class="action-btn danger" onclick="deleteProjectAdmin('${code}')">🗑️</button>
@@ -530,7 +641,7 @@
                     <button class="btn btn-sm" onclick="openProjectModalAdmin()">+ Nuevo Proyecto</button>
                 </div>
                 <div class="card-body"><div class="table-container"><table>
-                    <thead><tr><th>Código</th><th>Nombre</th><th>Cliente</th><th>DPs</th><th>Clientes</th><th>Fertig</th><th>Progreso</th><th>Estado</th><th>Acciones</th></tr></thead>
+                    <thead><tr><th>Código</th><th>Nombre</th><th>Cliente</th><th>DPs</th><th>Clientes</th><th>GEREED</th><th>Progreso</th><th>Estado GO</th><th>Acciones</th></tr></thead>
                     <tbody>${rows}</tbody>
                 </table></div></div>
             </div>
